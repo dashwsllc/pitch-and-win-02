@@ -55,7 +55,12 @@ export function ExecutiveWithdrawalManagement() {
         .select('*')
         .order('data_solicitacao', { ascending: false })
 
-      if (saquesError) throw saquesError
+      if (saquesError) {
+        console.error('Error fetching withdrawals:', saquesError)
+        throw saquesError
+      }
+
+      console.log('Withdrawals data:', saques)
 
       const userIds = Array.from(new Set((saques || []).map((s) => s.user_id)))
       let profilesMap = new Map<string, { display_name: string | null; user_id: string }>()
@@ -65,8 +70,12 @@ export function ExecutiveWithdrawalManagement() {
           .from('profiles')
           .select('user_id, display_name')
           .in('user_id', userIds)
-        if (profilesError) throw profilesError
-        profiles?.forEach((p) => profilesMap.set(p.user_id, { user_id: p.user_id, display_name: p.display_name }))
+        
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError)
+        } else {
+          profiles?.forEach((p) => profilesMap.set(p.user_id, { user_id: p.user_id, display_name: p.display_name }))
+        }
       }
 
       const merged = (saques || []).map((s) => ({
@@ -74,6 +83,7 @@ export function ExecutiveWithdrawalManagement() {
         profile: profilesMap.get(s.user_id) || { user_id: s.user_id, display_name: `Usuário ${s.user_id.substring(0, 8)}` }
       })) as WithdrawalRequest[]
 
+      console.log('Merged withdrawals:', merged)
       setWithdrawals(merged)
     } catch (error) {
       console.error('Error fetching withdrawals:', error)

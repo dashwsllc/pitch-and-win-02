@@ -65,7 +65,7 @@ export function ExecutiveSessionControl() {
 
   const fetchActiveSessions = async () => {
     try {
-      // Buscar dados reais de sessões dos usuários com last_seen_at atualizado
+      // Mapear dados dos usuários para sessões
       const userSessions: UserSession[] = users.map((user: any) => ({
         user_id: user.user_id,
         email: user.display_name || `Usuário ${user.user_id?.substring(0, 8)}`,
@@ -80,6 +80,7 @@ export function ExecutiveSessionControl() {
       )
 
       setSessions(userSessions)
+      console.log('Sessions fetched:', userSessions)
     } catch (error) {
       console.error('Error fetching sessions:', error)
     } finally {

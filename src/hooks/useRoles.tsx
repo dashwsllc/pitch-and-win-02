@@ -79,37 +79,50 @@ export function useAllUsers() {
 
   const fetchAllUsers = async () => {
     try {
-      // Buscar dados diretos com JOIN para garantir todos os usuários
-      const { data: allUsersData, error: usersError } = await supabase
+      // Buscar todos os perfis de usuários
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles!left (
-            role
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
-      if (usersError) {
-        console.error('Error fetching all users:', usersError)
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError)
         return
       }
 
-      console.log('Raw users data:', allUsersData)
+      // Buscar todos os roles de usuários
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role')
 
-      // Mapear os dados para o formato esperado
-      const mappedUsers = (allUsersData || []).map((user: any) => {
-        const userRoles = user.user_roles || []
-        const roles = userRoles.map((ur: any) => ur.role).filter(Boolean)
+      if (rolesError) {
+        console.error('Error fetching roles:', rolesError)
+        return
+      }
+
+      console.log('Profiles data:', profilesData)
+      console.log('Roles data:', rolesData)
+
+      // Criar mapa de roles por user_id
+      const rolesMap = new Map<string, string[]>()
+      rolesData?.forEach(roleEntry => {
+        const existingRoles = rolesMap.get(roleEntry.user_id) || []
+        existingRoles.push(roleEntry.role)
+        rolesMap.set(roleEntry.user_id, existingRoles)
+      })
+
+      // Combinar perfis com roles
+      const mappedUsers = (profilesData || []).map((profile: any) => {
+        const userRoles = rolesMap.get(profile.user_id) || ['seller']
         
         return {
-          ...user,
-          roles: roles.length > 0 ? roles : ['seller'],
-          role: roles.length > 0 ? roles[0] : 'seller'
+          ...profile,
+          roles: userRoles,
+          role: userRoles[0]
         }
       })
 
-      console.log('Mapped users:', mappedUsers)
+      console.log('Final mapped users:', mappedUsers)
       setUsers(mappedUsers)
     } catch (error) {
       console.error('Error in fetchAllUsers:', error)

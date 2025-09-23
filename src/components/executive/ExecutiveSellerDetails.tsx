@@ -44,7 +44,7 @@ interface SellerStats {
 }
 
 export function ExecutiveSellerDetails() {
-  const { users, loading: usersLoading } = useAllUsers()
+  const { users, loading: usersLoading, refetch } = useAllUsers()
   const [selectedSeller, setSelectedSeller] = useState<string>('')
   const [dateFilter, setDateFilter] = useState<string>('30dias')
   const [stats, setStats] = useState<SellerStats>({
