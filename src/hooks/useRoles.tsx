@@ -19,6 +19,8 @@ export function useRoles() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false)
 
   useEffect(() => {
+    let mounted = true
+    
     if (!user) {
       setRoles([])
       setIsExecutive(false)
@@ -27,8 +29,15 @@ export function useRoles() {
       return
     }
 
-    fetchUserRoles()
-  }, [user])
+    const fetchRoles = async () => {
+      if (mounted) {
+        await fetchUserRoles()
+      }
+    }
+    
+    fetchRoles()
+    return () => { mounted = false }
+  }, [user?.id]) // Usar apenas user.id para evitar loops
 
   const fetchUserRoles = async () => {
     if (!user) return

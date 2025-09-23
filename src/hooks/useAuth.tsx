@@ -17,10 +17,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  let heartbeat: number | undefined
 
   useEffect(() => {
     let mounted = true
-    let heartbeat: number | undefined
 
     const updateLastSeen = async (uid: string) => {
       try {
@@ -52,60 +52,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
+        
         if (error) {
           console.error('Error getting initial session:', error)
+          // Se houver erro na sessão, limpar tudo
+          if (mounted) {
+            setSession(null)
+            setUser(null)
+            setLoading(false)
+          }
+          return
         }
+        
         if (mounted) {
           setSession(session)
           setUser(session?.user ?? null)
           setLoading(false)
-          // Não atualiza last_seen_at na inicialização, apenas quando há login ativo
         }
       } catch (error) {
         console.error('Error initializing auth:', error)
-        if (mounted) setLoading(false)
+        if (mounted) {
+          setSession(null)
+          setUser(null)
+          setLoading(false)
+        }
       }
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email)
-        if (mounted) {
-          setSession(session)
-          setUser(session?.user ?? null)
-          setLoading(false)
-        }
-        // controlar heartbeat sem bloquear o callback
-        if (event === 'SIGNED_IN') {
-          const uid = session?.user?.id
-          if (uid) {
+        
+        if (!mounted) return
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+        setLoading(false)
+        
+        // Gerenciar heartbeat e verificações de usuário
+        if (event === 'SIGNED_IN' && session?.user?.id) {
+          const uid = session.user.id
+          
+          try {
             // Verificar se usuário não está suspenso
-            setTimeout(async () => {
-              try {
-                const { data: profile } = await supabase
-                  .from('profiles')
-                  .select('suspended')
-                  .eq('user_id', uid)
-                  .single()
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('suspended')
+              .eq('user_id', uid)
+              .single()
 
-                if (profile?.suspended) {
-                  console.log('User is suspended, forcing logout')
-                  await supabase.auth.signOut()
-                  return
-                }
+            if (profile?.suspended) {
+              console.log('User is suspended, forcing logout')
+              await supabase.auth.signOut()
+              return
+            }
 
-                updateLastSeen(uid)
-              } catch (error) {
-                console.error('Error checking user status:', error)
-              }
-            }, 0)
+            // Atualizar last_seen_at
+            await updateLastSeen(uid)
+            
+            // Configurar heartbeat
             if (heartbeat) window.clearInterval(heartbeat)
-            // Atualiza a cada 5 minutos em vez de 1 minuto para ser mais preciso
             heartbeat = window.setInterval(() => updateLastSeen(uid), 300_000)
+          } catch (error) {
+            console.error('Error in auth state change:', error)
           }
         }
+        
         if (event === 'SIGNED_OUT') {
           if (heartbeat) window.clearInterval(heartbeat)
+          setUser(null)
+          setSession(null)
         }
       }
     )
@@ -144,11 +160,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (!error) {
+    try {
+      // Limpar estado local primeiro para evitar loops
+      if (heartbeat) {
+        window.clearInterval(heartbeat)
+        heartbeat = undefined
+      }
+      
+      // Tentar fazer logout do Supabase com timeout
+      const logoutPromise = supabase.auth.signOut()
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Logout timeout')), 5000)
+      )
+      
+      try {
+        await Promise.race([logoutPromise, timeoutPromise])
+      } catch (error) {
+        console.warn('Logout warning (proceeding anyway):', error)
+      }
+      
+      // Limpar estado sempre
       setUser(null)
       setSession(null)
-      // The auth state change will handle redirect automatically
+      
+      // Redirecionar para auth sempre
+      window.location.href = '/auth'
+    } catch (error) {
+      console.error('Error during logout:', error)
+      // Mesmo com erro, limpar estado e redirecionar
+      setUser(null)
+      setSession(null)
+      if (heartbeat) {
+        window.clearInterval(heartbeat)
+        heartbeat = undefined
+      }
+      window.location.href = '/auth'
     }
   }
 

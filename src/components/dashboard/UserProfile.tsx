@@ -19,7 +19,20 @@ export function UserProfile() {
   const { profile } = useProfile()
 
   const handleSignOut = async () => {
-    await signOut()
+    try {
+      // Evitar cliques múltiplos
+      const button = document.querySelector('[data-logout-button]') as HTMLButtonElement
+      if (button) {
+        button.disabled = true
+        button.textContent = 'Saindo...'
+      }
+      
+      await signOut()
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Forçar redirecionamento mesmo com erro
+      window.location.href = '/auth'
+    }
   }
 
   const getInitials = (email: string) => {
@@ -72,6 +85,7 @@ export function UserProfile() {
         <DropdownMenuItem 
           className="cursor-pointer text-destructive focus:text-destructive"
           onClick={handleSignOut}
+          data-logout-button
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sair</span>
