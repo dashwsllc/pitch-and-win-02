@@ -59,7 +59,7 @@ export function ExecutiveUserManagement() {
     return (
       <Badge variant="secondary">
         <UserCheck className="w-3 h-3 mr-1" />
-        Seller
+        Individual
       </Badge>
     )
   }
@@ -74,9 +74,9 @@ export function ExecutiveUserManagement() {
         .delete()
         .eq('user_id', userId)
 
-      // Inserir o novo role (seller é sempre inserido, executive apenas se selecionado)
-      const rolesToInsert: Array<{ user_id: string, role: 'seller' | 'executive' }> = [
-        { user_id: userId, role: 'seller' }
+      // Inserir o novo role (individual é sempre inserido, executive apenas se selecionado)
+      const rolesToInsert: Array<{ user_id: string, role: 'individual' | 'executive' }> = [
+        { user_id: userId, role: 'individual' }
       ]
       
       if (newRole === 'executive') {
@@ -93,7 +93,7 @@ export function ExecutiveUserManagement() {
 
       toast({
         title: 'Cargo alterado!',
-        description: `${userEmail} agora é ${newRole === 'executive' ? 'Executive' : 'Seller'}.`
+        description: `${userEmail} agora é ${newRole === 'executive' ? 'Executive' : 'Individual'}.`
       })
 
       refetch()
@@ -234,7 +234,7 @@ export function ExecutiveUserManagement() {
           {users.map((user) => {
             const userRoles = user.roles || []
             const isExecutive = userRoles.includes('executive')
-            const role = isExecutive ? 'executive' : 'seller'
+            const role = isExecutive ? 'executive' : 'individual'
             const isSuspended = user.suspended || false
             
             return (
@@ -282,7 +282,7 @@ export function ExecutiveUserManagement() {
                           <div className="flex items-center gap-1">
                             {role === 'executive' ? <Crown className="w-3 h-3" /> : <UserCheck className="w-3 h-3" />}
                             <span className="text-xs capitalize">
-                              {role === 'executive' ? 'Executive' : 'Seller'}
+                              {role === 'executive' ? 'Executive' : 'Individual'}
                             </span>
                           </div>
                         )}

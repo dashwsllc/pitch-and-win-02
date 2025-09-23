@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 
-export type UserRole = 'seller' | 'executive'
+export type UserRole = 'individual' | 'executive'
 
 interface UserRoleData {
   id: string
@@ -48,11 +48,11 @@ export function useRoles() {
         return
       }
 
-      const userRoles = data?.map(r => r.role) || ['seller']
+      const userRoles = (data?.map(r => r.role) || ['individual']) as UserRole[]
       setRoles(userRoles)
       
       // Ser executive requer ter o role E ser autorizado pelo super admin (ou ser o próprio super admin)
-      const hasExecutiveRole = userRoles.includes('executive')
+      const hasExecutiveRole = userRoles.includes('executive' as UserRole)
       setIsExecutive(isSuperAdminUser || hasExecutiveRole)
     } catch (error) {
       console.error('Error in fetchUserRoles:', error)
@@ -113,7 +113,7 @@ export function useAllUsers() {
 
       // Combinar perfis com roles
       const mappedUsers = (profilesData || []).map((profile: any) => {
-        const userRoles = rolesMap.get(profile.user_id) || ['seller']
+        const userRoles = (rolesMap.get(profile.user_id) || ['individual']) as string[]
         
         return {
           ...profile,

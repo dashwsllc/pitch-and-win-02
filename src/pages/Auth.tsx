@@ -199,12 +199,12 @@ export default function Auth() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-cargo">Cargo</Label>
-                    <Select name="cargo" defaultValue="seller" required>
+                    <Select name="cargo" defaultValue="individual" required>
                       <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="seller">Seller</SelectItem>
+                        <SelectItem value="individual">Individual</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

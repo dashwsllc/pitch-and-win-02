@@ -41,7 +41,7 @@ interface CustomPosition {
 const POSITION_LIMITS = {
   "Co-Founders": 2,
   "Executive": 2,
-  "Seller": 4,
+  "Individual": 4,
   "Operator": 4
 }
 
@@ -405,22 +405,22 @@ export function TeamMembersPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-2 sm:p-6 space-y-4 sm:space-y-6 max-w-full overflow-hidden">
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Listagem de Membros</h1>
-          <p className="text-muted-foreground">Gerencie os membros da equipe</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Listagem de Membros</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">Gerencie os membros da equipe</p>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
           <Dialog open={showPositionDialog} onOpenChange={setShowPositionDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 w-full sm:w-auto">
                 <Plus className="w-4 h-4" />
                 Criar Cargo
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[95vw] max-w-md mx-auto">
               <DialogHeader>
                 <DialogTitle>Criar Novo Cargo</DialogTitle>
               </DialogHeader>
@@ -459,19 +459,19 @@ export function TeamMembersPage() {
 
           <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 w-full sm:w-auto">
                 <History className="w-4 h-4" />
                 Histórico
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogContent className="w-[95vw] max-w-4xl max-h-[80vh] overflow-y-auto mx-auto">
               <DialogHeader>
                 <DialogTitle>Registro de Requerimentos</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 {paginatedHistory.map(record => (
-                  <Card key={record.id} className="p-4">
-                    <div className="flex justify-between items-start">
+                  <Card key={record.id} className="p-2 sm:p-4">
+                    <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-start sm:space-y-0">
                       <div>
                         <Badge variant="outline">{record.action_type}</Badge>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -481,17 +481,17 @@ export function TeamMembersPage() {
                           <p className="text-sm mt-2"><strong>Motivo:</strong> {record.reason}</p>
                         )}
                       </div>
-                      <div className="text-right text-xs text-muted-foreground">
-                        {record.old_values && <div>Antes: {JSON.stringify(record.old_values)}</div>}
-                        {record.new_values && <div>Depois: {JSON.stringify(record.new_values)}</div>}
+                      <div className="text-left sm:text-right text-xs text-muted-foreground mt-2 sm:mt-0">
+                        {record.old_values && <div className="break-all">Antes: {JSON.stringify(record.old_values)}</div>}
+                        {record.new_values && <div className="break-all">Depois: {JSON.stringify(record.new_values)}</div>}
                       </div>
                     </div>
                   </Card>
                 ))}
                 
                 {totalPages > 1 && (
-                  <div className="flex justify-center gap-2 mt-4">
-                    <Button 
+                  <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center mt-4">
+                    <Button
                       variant="outline" 
                       size="sm"
                       disabled={historyPage === 1}
@@ -499,7 +499,7 @@ export function TeamMembersPage() {
                     >
                       Anterior
                     </Button>
-                    <span className="text-sm text-muted-foreground self-center">
+                    <span className="text-sm text-muted-foreground self-center px-2">
                       Página {historyPage} de {totalPages}
                     </span>
                     <Button 
@@ -518,12 +518,12 @@ export function TeamMembersPage() {
 
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
-              <Button className="gap-2">
+              <Button className="gap-2 w-full sm:w-auto">
                 <Plus className="w-4 h-4" />
                 Adicionar Requerimento
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[95vw] max-w-md mx-auto">
               <DialogHeader>
                 <DialogTitle>Adicionar Novo Membro</DialogTitle>
               </DialogHeader>
@@ -601,7 +601,7 @@ export function TeamMembersPage() {
                   groupedMembers[position].map(member => (
                     <div 
                       key={member.id} 
-                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/50"
+                      className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 p-3 bg-muted/30 rounded-lg border border-border/50"
                     >
                       {editingMember === member.id ? (
                         <EditMemberForm 
@@ -610,14 +610,14 @@ export function TeamMembersPage() {
                           onCancel={() => setEditingMember(null)}
                         />
                       ) : editingStatus === member.id ? (
-                        <div className="flex items-center gap-2 w-full">
+                        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2 w-full">
                           <div className="flex-1 space-y-2">
-                            <div className="flex gap-2">
+                            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                               <Select 
                                 value={statusUpdate.status} 
                                 onValueChange={(value) => setStatusUpdate(prev => ({ ...prev, status: value }))}
                               >
-                                <SelectTrigger className="w-32">
+                                <SelectTrigger className="w-full sm:w-32">
                                   <SelectValue placeholder="Status" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border border-border shadow-lg z-50">
@@ -636,7 +636,7 @@ export function TeamMembersPage() {
                               )}
                             </div>
                           </div>
-                          <div className="flex gap-1">
+                          <div className="flex gap-1 mt-2 sm:mt-0">
                             <Button variant="ghost" size="sm" onClick={() => handleStatusUpdate(member.id)}>
                               <Save className="w-4 h-4" />
                             </Button>
@@ -650,12 +650,14 @@ export function TeamMembersPage() {
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-foreground">{member.name}</span>
-                                {getPositionIcon(member.name)}
-                                <div className="flex gap-1 ml-2">
+                          <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3 flex-1">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-foreground truncate">{member.name}</span>
+                                  {getPositionIcon(member.name)}
+                                </div>
+                                <div className="flex gap-1 flex-wrap">
                                   {getTags(member).map((tag, index) => (
                                     <Badge key={index} variant={getTagVariant(tag)} className="text-xs">
                                       {tag}
@@ -663,18 +665,18 @@ export function TeamMembersPage() {
                                   ))}
                                 </div>
                               </div>
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-sm text-muted-foreground block">
                                 Incluído em: {format(new Date(member.date_added), 'dd/MM/yyyy HH:mm')}
                               </span>
                               {member.status_reason && (
                                 <div className="flex items-center gap-1 mt-1">
-                                  <AlertCircle className="w-3 h-3 text-muted-foreground" />
-                                  <span className="text-xs text-muted-foreground">{member.status_reason}</span>
+                                  <AlertCircle className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                                  <span className="text-xs text-muted-foreground break-words">{member.status_reason}</span>
                                 </div>
                               )}
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 mt-2 sm:mt-0 justify-end sm:justify-start">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -744,8 +746,8 @@ function EditMemberForm({ member, onSave, onCancel }: EditMemberFormProps) {
   const allPositions = [...POSITIONS]
   
   return (
-    <div className="flex items-center gap-2 w-full">
-      <div className="grid grid-cols-3 gap-2 flex-1">
+    <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -769,7 +771,7 @@ function EditMemberForm({ member, onSave, onCancel }: EditMemberFormProps) {
           onChange={(e) => setDateAdded(e.target.value)}
         />
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 justify-end sm:justify-start mt-2 sm:mt-0">
         <Button variant="ghost" size="sm" onClick={handleSave}>
           <Save className="w-4 h-4" />
         </Button>

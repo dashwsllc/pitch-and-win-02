@@ -38,7 +38,7 @@ const menuItems = [
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ]
 
-const sellerMenuItems = [
+const individualMenuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { 
     title: "Formulários", 
@@ -62,7 +62,7 @@ interface AppSidebarProps {
 }
 
 export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
-  const items = isExecutive ? menuItems : sellerMenuItems
+  const items = isExecutive ? menuItems : individualMenuItems
   const location = useLocation()
   const navigate = useNavigate()
   const [openForm, setOpenForm] = useState(false)
@@ -72,7 +72,7 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
   }
   
   return (
-    <aside className="w-16 min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50">
+    <aside className="w-16 min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
       <div className="p-4">
         <div className="flex items-center justify-center">
           <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
@@ -102,13 +102,13 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                   <item.icon className="w-5 h-5" />
                 </button>
                 {isFormularioActive(item.submenu) && (
-                  <div className="absolute top-full left-0 mt-1 z-10 flex flex-col gap-1 p-2 border border-sidebar-primary/20 rounded-lg bg-sidebar border-border shadow-lg">
+                  <div className="absolute top-full left-full ml-1 z-50 flex flex-col gap-1 p-2 border border-sidebar-primary/20 rounded-lg bg-sidebar border-border shadow-lg min-w-[200px]">
                     {item.submenu.map((subItem) => (
                       <NavLink
                         key={subItem.title}
                         to={subItem.url}
                         className={({ isActive }) =>
-                          `flex items-center justify-center w-12 h-9 rounded-lg transition-all ${
+                          `flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm whitespace-nowrap ${
                             isActive
                               ? "bg-sidebar-accent text-sidebar-primary border border-sidebar-primary/20"
                               : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
@@ -116,7 +116,8 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                         }
                         title={subItem.title}
                       >
-                        <subItem.icon className="w-4 h-4" />
+                        <subItem.icon className="w-4 h-4 flex-shrink-0" />
+                        <span>{subItem.title}</span>
                       </NavLink>
                     ))}
                   </div>

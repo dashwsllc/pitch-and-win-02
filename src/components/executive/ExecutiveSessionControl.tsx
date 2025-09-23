@@ -58,7 +58,7 @@ export function ExecutiveSessionControl() {
     return (
       <Badge variant="secondary">
         <UserCheck className="w-3 h-3 mr-1" />
-        Seller
+        Individual
       </Badge>
     )
   }
@@ -71,7 +71,7 @@ export function ExecutiveSessionControl() {
         email: user.display_name || `Usuário ${user.user_id?.substring(0, 8)}`,
         last_sign_in_at: user.last_seen_at || user.updated_at || user.created_at,
         display_name: user.display_name || `Usuário ${user.user_id?.substring(0, 8)}`,
-        role: user.role || (user.roles?.[0] ?? 'seller')
+        role: user.role || (user.roles?.[0] ?? 'individual')
       }))
 
       // Ordenar por última atividade (mais recentes primeiro)
