@@ -39,10 +39,10 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground">
-                Bem-vindo de volta, {userName}! 👋
+                System
               </h1>
               <p className="text-muted-foreground mt-1">
-                Aqui está um resumo da sua performance de vendas
+                Bem-vindo de volta, {userName}! 👋 Aqui está um resumo da sua performance
               </p>
             </div>
             

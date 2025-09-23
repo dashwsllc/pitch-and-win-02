@@ -65,14 +65,19 @@ export function ExecutiveSessionControl() {
 
   const fetchActiveSessions = async () => {
     try {
-      // Mapear usuários com última atividade real (last_seen_at)
+      // Buscar dados reais de sessões dos usuários com last_seen_at atualizado
       const userSessions: UserSession[] = users.map((user: any) => ({
         user_id: user.user_id,
-        email: user.display_name || user.user_id,
+        email: user.display_name || `Usuário ${user.user_id?.substring(0, 8)}`,
         last_sign_in_at: user.last_seen_at || user.updated_at || user.created_at,
-        display_name: user.display_name,
+        display_name: user.display_name || `Usuário ${user.user_id?.substring(0, 8)}`,
         role: user.role || (user.roles?.[0] ?? 'seller')
       }))
+
+      // Ordenar por última atividade (mais recentes primeiro)
+      userSessions.sort((a, b) => 
+        new Date(b.last_sign_in_at).getTime() - new Date(a.last_sign_in_at).getTime()
+      )
 
       setSessions(userSessions)
     } catch (error) {

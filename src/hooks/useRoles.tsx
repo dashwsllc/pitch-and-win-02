@@ -79,7 +79,7 @@ export function useAllUsers() {
 
   const fetchAllUsers = async () => {
     try {
-      // Buscar todos os perfis
+      // Buscar todos os usuários do auth.users e seus perfis
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -109,7 +109,7 @@ export function useAllUsers() {
 
       const merged = (profiles || []).map((p) => ({
         ...p,
-        roles: rolesByUser.get(p.user_id) || [],
+        roles: rolesByUser.get(p.user_id) || ['seller'],
         role: (rolesByUser.get(p.user_id) || ['seller'])[0]
       }))
 

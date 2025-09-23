@@ -71,7 +71,7 @@ export function ExecutiveWithdrawalManagement() {
 
       const merged = (saques || []).map((s) => ({
         ...s,
-        profile: profilesMap.get(s.user_id)
+        profile: profilesMap.get(s.user_id) || { user_id: s.user_id, display_name: `Usuário ${s.user_id.substring(0, 8)}` }
       })) as WithdrawalRequest[]
 
       setWithdrawals(merged)
