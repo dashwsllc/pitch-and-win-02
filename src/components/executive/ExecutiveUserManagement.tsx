@@ -74,9 +74,9 @@ export function ExecutiveUserManagement() {
         .delete()
         .eq('user_id', userId)
 
-      // Inserir o novo role (individual é sempre inserido, executive apenas se selecionado)
-      const rolesToInsert: Array<{ user_id: string, role: 'individual' | 'executive' }> = [
-        { user_id: userId, role: 'individual' }
+      // Inserir o novo role (seller é sempre inserido, executive apenas se selecionado)
+      const rolesToInsert: Array<{ user_id: string, role: 'seller' | 'executive' }> = [
+        { user_id: userId, role: 'seller' }
       ]
       
       if (newRole === 'executive') {

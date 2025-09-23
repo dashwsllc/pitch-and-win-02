@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { 
   BarChart3, 
   Home,
@@ -70,6 +70,13 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
   const isFormularioActive = (submenu: any[]) => {
     return submenu.some(subItem => location.pathname === subItem.url) || location.pathname === '/formularios'
   }
+
+  useEffect(() => {
+    const isFormularioRoute = items.find(item => 
+      item.isDropdown && item.submenu && isFormularioActive(item.submenu)
+    )
+    setOpenForm(!!isFormularioRoute)
+  }, [location.pathname])
   
   return (
     <aside className="w-16 min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
@@ -85,7 +92,7 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
         {items.map((item) => {
           if (item.isDropdown && item.submenu) {
             return (
-              <div key={item.title} className="relative flex flex-col items-center">
+              <div key={item.title} className="flex flex-col">
                 <button
                   className={`flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-300 ${
                     isFormularioActive(item.submenu)
@@ -93,31 +100,27 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                   }`}
                   title={item.title}
-                  onClick={() => {
-                    if (!isFormularioActive(item.submenu)) {
-                      navigate('/vendas')
-                    }
-                  }}
+                  onClick={() => setOpenForm(!openForm)}
                 >
                   <item.icon className="w-5 h-5" />
                 </button>
-                {isFormularioActive(item.submenu) && (
-                  <div className="absolute top-full left-full ml-1 z-50 flex flex-col gap-1 p-2 border border-sidebar-primary/20 rounded-lg bg-sidebar border-border shadow-lg min-w-[200px]">
+                {openForm && (
+                  <div className="flex flex-col gap-1 mt-2 ml-1">
                     {item.submenu.map((subItem) => (
                       <NavLink
                         key={subItem.title}
                         to={subItem.url}
                         className={({ isActive }) =>
-                          `flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm whitespace-nowrap ${
+                          `flex items-center justify-center w-10 h-10 rounded-lg transition-all ${
                             isActive
                               ? "bg-sidebar-accent text-sidebar-primary border border-sidebar-primary/20"
                               : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                           }`
                         }
                         title={subItem.title}
+                        onClick={() => setOpenForm(false)}
                       >
-                        <subItem.icon className="w-4 h-4 flex-shrink-0" />
-                        <span>{subItem.title}</span>
+                        <subItem.icon className="w-4 h-4" />
                       </NavLink>
                     ))}
                   </div>

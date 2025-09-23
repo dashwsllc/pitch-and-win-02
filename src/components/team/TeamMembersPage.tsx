@@ -41,7 +41,7 @@ interface CustomPosition {
 const POSITION_LIMITS = {
   "Co-Founders": 2,
   "Executive": 2,
-  "Individual": 4,
+  "Seller": 4,
   "Operator": 4
 }
 
@@ -77,7 +77,7 @@ export function TeamMembersPage() {
         .from('team_members')
         .select('*')
         .order('position', { ascending: true })
-        .order('date_added', { ascending: true })
+        .order('name', { ascending: true })
 
       if (error) throw error
       setMembers(data || [])
@@ -350,7 +350,13 @@ export function TeamMembersPage() {
     }
   }
 
-  const getPositionIcon = (name: string) => {
+  const getPositionIcon = (position: string) => {
+    if (position === "Dev") return <span className="mr-1">🔥</span>
+    if (position === "Expert") return <span className="mr-1">🧠</span>
+    return null
+  }
+  
+  const getNameIcon = (name: string) => {
     if (name === "Sinclair") return <Crown className="w-3 h-3 text-amber-500" />
     if (name === "Willer") return <Star className="w-3 h-3 text-blue-500" />
     return null
@@ -587,7 +593,8 @@ export function TeamMembersPage() {
           <Card key={position} className="bg-card border-border">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold text-card-foreground">
+                <CardTitle className="text-lg font-semibold text-card-foreground flex items-center">
+                  {getPositionIcon(position)}
                   {position}
                 </CardTitle>
                 <Badge variant="secondary">
@@ -655,7 +662,7 @@ export function TeamMembersPage() {
                               <div className="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium text-foreground truncate">{member.name}</span>
-                                  {getPositionIcon(member.name)}
+                                  {getNameIcon(member.name)}
                                 </div>
                                 <div className="flex gap-1 flex-wrap">
                                   {getTags(member).map((tag, index) => (

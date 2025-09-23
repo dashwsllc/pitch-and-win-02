@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 
-export type UserRole = 'individual' | 'executive'
+export type UserRole = 'seller' | 'executive'
 
 interface UserRoleData {
   id: string
@@ -48,7 +48,7 @@ export function useRoles() {
         return
       }
 
-      const userRoles = (data?.map(r => r.role) || ['individual']) as UserRole[]
+      const userRoles = (data?.map(r => r.role) || ['seller']) as UserRole[]
       setRoles(userRoles)
       
       // Ser executive requer ter o role E ser autorizado pelo super admin (ou ser o próprio super admin)
@@ -113,7 +113,7 @@ export function useAllUsers() {
 
       // Combinar perfis com roles
       const mappedUsers = (profilesData || []).map((profile: any) => {
-        const userRoles = (rolesMap.get(profile.user_id) || ['individual']) as string[]
+        const userRoles = (rolesMap.get(profile.user_id) || ['seller']) as string[]
         
         return {
           ...profile,
