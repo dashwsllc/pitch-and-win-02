@@ -89,6 +89,33 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_positions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          max_members: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          max_members?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          max_members?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       document_categories: {
         Row: {
           created_at: string
@@ -289,29 +316,82 @@ export type Database = {
         }
         Relationships: []
       }
+      team_member_history: {
+        Row: {
+          action_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          member_id: string | null
+          new_values: Json | null
+          old_values: Json | null
+          reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          member_id?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          member_id?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_member_history_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           created_at: string
+          custom_tags: string[] | null
           date_added: string
           id: string
           name: string
           position: string
+          status: string
+          status_reason: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          custom_tags?: string[] | null
           date_added?: string
           id?: string
           name: string
           position: string
+          status?: string
+          status_reason?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          custom_tags?: string[] | null
           date_added?: string
           id?: string
           name?: string
           position?: string
+          status?: string
+          status_reason?: string | null
           updated_at?: string
         }
         Relationships: []
