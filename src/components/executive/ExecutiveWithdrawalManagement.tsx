@@ -80,7 +80,7 @@ export function ExecutiveWithdrawalManagement() {
 
       const merged = (saques || []).map((s) => ({
         ...s,
-        profile: profilesMap.get(s.user_id) || { user_id: s.user_id, display_name: `Usuário ${s.user_id.substring(0, 8)}` }
+        profile: profilesMap.get(s.user_id) || { user_id: s.user_id, display_name: `Vendedor ${s.user_id.substring(0, 8)}` }
       })) as WithdrawalRequest[]
 
       console.log('Merged withdrawals:', merged)

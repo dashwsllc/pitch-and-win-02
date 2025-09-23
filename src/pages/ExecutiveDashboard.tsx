@@ -203,10 +203,12 @@ export default function ExecutiveDashboard() {
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       activity.type === 'sale' ? 'bg-green-100 text-green-600' :
                       activity.type === 'approach' ? 'bg-blue-100 text-blue-600' :
+                      activity.type === 'withdrawal' ? 'bg-purple-100 text-purple-600' :
                       'bg-orange-100 text-orange-600'
                     }`}>
                       {activity.type === 'sale' ? <DollarSign className="w-4 h-4" /> :
                        activity.type === 'approach' ? <MessageSquare className="w-4 h-4" /> :
+                       activity.type === 'withdrawal' ? <DollarSign className="w-4 h-4" /> :
                        <UserCheck className="w-4 h-4" />}
                     </div>
                     <div className="flex-1">

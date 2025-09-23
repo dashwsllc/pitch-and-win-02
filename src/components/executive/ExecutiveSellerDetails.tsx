@@ -94,8 +94,10 @@ export function ExecutiveSellerDetails() {
     try {
       const { start, end } = getDateRange(dateFilter)
 
+      console.log(`Fetching stats for seller ${sellerId} from ${start} to ${end}`)
+
       // Buscar vendas do seller no período
-      const { data: sales } = await supabase
+      const { data: sales, error: salesError } = await supabase
         .from('vendas')
         .select('*')
         .eq('user_id', sellerId)
@@ -103,8 +105,14 @@ export function ExecutiveSellerDetails() {
         .lte('created_at', end)
         .order('created_at', { ascending: false })
 
+      if (salesError) {
+        console.error('Error fetching sales:', salesError)
+      } else {
+        console.log(`Found ${sales?.length || 0} sales for seller ${sellerId}`)
+      }
+
       // Buscar abordagens do seller no período
-      const { data: approaches } = await supabase
+      const { data: approaches, error: approachesError } = await supabase
         .from('abordagens')
         .select('*')
         .eq('user_id', sellerId)
@@ -112,11 +120,21 @@ export function ExecutiveSellerDetails() {
         .lte('created_at', end)
         .order('created_at', { ascending: false })
 
+      if (approachesError) {
+        console.error('Error fetching approaches:', approachesError)
+      } else {
+        console.log(`Found ${approaches?.length || 0} approaches for seller ${sellerId}`)
+      }
+
       // Buscar assinaturas do seller
-      const { data: subscriptions } = await supabase
+      const { data: subscriptions, error: subscriptionsError } = await supabase
         .from('assinaturas')
         .select('*')
         .eq('user_id', sellerId)
+
+      if (subscriptionsError) {
+        console.error('Error fetching subscriptions:', subscriptionsError)
+      }
 
       const totalSales = sales?.length || 0
       const totalRevenue = sales?.reduce((sum, sale) => sum + Number(sale.valor_venda), 0) || 0
@@ -205,11 +223,11 @@ export function ExecutiveSellerDetails() {
                     <SelectValue placeholder="Selecione um vendedor para ver os detalhes" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.user_id}>
-                        {user.display_name || `Usuário ${user.user_id.substring(0, 8)}`}
-                      </SelectItem>
-                    ))}
+                     {users.map((user) => (
+                       <SelectItem key={user.id} value={user.user_id}>
+                         {user.display_name || `Vendedor ${user.user_id.substring(0, 8)}`}
+                       </SelectItem>
+                     ))}
                   </SelectContent>
                 </Select>
               </div>

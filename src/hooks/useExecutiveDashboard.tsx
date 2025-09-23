@@ -22,7 +22,7 @@ interface ExecutiveDashboardData {
     conversion_rate: number
   }>
   recentActivity: Array<{
-    type: 'sale' | 'approach' | 'subscription'
+    type: 'sale' | 'approach' | 'subscription' | 'withdrawal'
     seller_name: string
     details: string
     created_at: string
@@ -189,22 +189,35 @@ export function useExecutiveDashboard(dateFilter: string = '30dias') {
         .sort((a, b) => b.total_revenue - a.total_revenue)
         .slice(0, 5)
 
-      // Atividade recente
+      // Buscar solicitações de saque recentes
+      const { data: withdrawalsData } = await supabase
+        .from('saques')
+        .select('*')
+        .gte('created_at', start)
+        .lte('created_at', end)
+
+      // Atividade recente incluindo saques
       const recentActivity = [
-        ...salesData?.slice(0, 5).map(sale => ({
+        ...salesData?.slice(0, 10).map(sale => ({
           type: 'sale' as const,
           seller_name: userNamesMap.get(sale.user_id) || `Usuário ${sale.user_id.substring(0, 8)}`,
-          details: `Venda de ${sale.nome_produto} - R$ ${Number(sale.valor_venda).toLocaleString('pt-BR')}`,
+          details: `Venda de ${sale.nome_produto} - ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(sale.valor_venda))}`,
           created_at: sale.created_at
         })) || [],
-        ...approachesData?.slice(0, 5).map(approach => ({
+        ...approachesData?.slice(0, 10).map(approach => ({
           type: 'approach' as const,
           seller_name: userNamesMap.get(approach.user_id) || `Usuário ${approach.user_id.substring(0, 8)}`,
           details: `${approach.nomes_abordados} pessoas abordadas`,
           created_at: approach.created_at
+        })) || [],
+        ...withdrawalsData?.slice(0, 10).map(withdrawal => ({
+          type: 'withdrawal' as const,
+          seller_name: userNamesMap.get(withdrawal.user_id) || `Usuário ${withdrawal.user_id.substring(0, 8)}`,
+          details: `Solicitação de saque de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(withdrawal.valor_solicitado))} - ${withdrawal.status}`,
+          created_at: withdrawal.created_at
         })) || []
       ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 10)
+        .slice(0, 15)
 
       setData({
         totalSellers,
