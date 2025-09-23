@@ -65,39 +65,30 @@ export function ExecutiveUserManagement() {
   }
 
   const changeUserRole = async (userId: string, userEmail: string, newRole: string) => {
-    if (!isSuperAdmin) {
-      toast({
-        title: 'Acesso negado',
-        description: 'Apenas o super administrador pode alterar cargos.',
-        variant: 'destructive'
-      })
-      return
-    }
-
     setUpdatingUser(userId)
     
     try {
-      // Remover role executive existente se houver
+      // Primeiro, remover todos os roles existentes para este usuário
       await supabase
         .from('user_roles')
         .delete()
         .eq('user_id', userId)
-        .eq('role', 'executive')
 
-      // Se o novo role é executive, inserir o role
+      // Inserir o novo role (seller é sempre inserido, executive apenas se selecionado)
+      const rolesToInsert: Array<{ user_id: string, role: 'seller' | 'executive' }> = [
+        { user_id: userId, role: 'seller' }
+      ]
+      
       if (newRole === 'executive') {
-        const { error } = await supabase
-          .from('user_roles')
-          .insert([
-            {
-              user_id: userId,
-              role: 'executive'
-            }
-          ])
+        rolesToInsert.push({ user_id: userId, role: 'executive' })
+      }
 
-        if (error) {
-          throw error
-        }
+      const { error } = await supabase
+        .from('user_roles')
+        .insert(rolesToInsert)
+
+      if (error) {
+        throw error
       }
 
       toast({
@@ -119,15 +110,6 @@ export function ExecutiveUserManagement() {
   }
 
   const toggleUserSuspension = async (userId: string, userEmail: string, currentSuspended: boolean) => {
-    if (!isSuperAdmin) {
-      toast({
-        title: 'Acesso negado',
-        description: 'Apenas o super administrador pode suspender contas.',
-        variant: 'destructive'
-      })
-      return
-    }
-
     setSuspendingUser(userId)
     
     try {
@@ -138,6 +120,17 @@ export function ExecutiveUserManagement() {
 
       if (error) {
         throw error
+      }
+
+      // Se estiver suspendendo, forçar logout do usuário
+      if (!currentSuspended) {
+        try {
+          await supabase.functions.invoke('force-logout', {
+            body: { userId }
+          })
+        } catch (logoutError) {
+          console.error('Error forcing logout:', logoutError)
+        }
       }
 
       toast({
@@ -311,7 +304,7 @@ export function ExecutiveUserManagement() {
                     </SelectContent>
                   </Select>
 
-                  {isSuperAdmin && (
+                  {(
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -353,7 +346,7 @@ export function ExecutiveUserManagement() {
                     </AlertDialog>
                   )}
 
-                  {isSuperAdmin && (
+                  {(
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button 

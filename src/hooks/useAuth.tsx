@@ -79,9 +79,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (event === 'SIGNED_IN') {
           const uid = session?.user?.id
           if (uid) {
-            // Só atualiza no login real, não no refresh de token
-            setTimeout(() => {
-              updateLastSeen(uid)
+            // Verificar se usuário não está suspenso
+            setTimeout(async () => {
+              try {
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('suspended')
+                  .eq('user_id', uid)
+                  .single()
+
+                if (profile?.suspended) {
+                  console.log('User is suspended, forcing logout')
+                  await supabase.auth.signOut()
+                  return
+                }
+
+                updateLastSeen(uid)
+              } catch (error) {
+                console.error('Error checking user status:', error)
+              }
             }, 0)
             if (heartbeat) window.clearInterval(heartbeat)
             // Atualiza a cada 5 minutos em vez de 1 minuto para ser mais preciso

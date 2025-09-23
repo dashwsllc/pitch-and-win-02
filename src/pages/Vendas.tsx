@@ -109,10 +109,10 @@ export default function Vendas() {
           <div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
               <ShoppingCart className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-              Vendas Realizadas
+              Minhas Vendas
             </h1>
             <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-              Acompanhe todas as suas vendas e performance
+              Acompanhe suas vendas e performance pessoal
             </p>
           </div>
           <Button 
@@ -197,7 +197,7 @@ export default function Vendas() {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <ShoppingCart className="w-5 h-5" />
-              Últimas Vendas ({filteredVendas.length})
+              Minhas Últimas Vendas ({filteredVendas.length})
             </CardTitle>
           </CardHeader>
           <CardContent>

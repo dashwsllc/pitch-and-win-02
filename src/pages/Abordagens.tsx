@@ -108,10 +108,10 @@ export default function Abordagens() {
           <div>
             <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
               <MessageSquare className="w-8 h-8 text-primary" />
-              Abordagens Realizadas
+              Minhas Abordagens
             </h1>
             <p className="text-muted-foreground mt-1">
-              Acompanhe todas as suas abordagens comerciais e performance
+              Acompanhe suas abordagens comerciais e performance pessoal
             </p>
           </div>
           <Button 
@@ -210,7 +210,7 @@ export default function Abordagens() {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
-              Últimas Abordagens ({filteredAbordagens.length})
+              Minhas Últimas Abordagens ({filteredAbordagens.length})
             </CardTitle>
           </CardHeader>
           <CardContent>

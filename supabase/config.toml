@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.reset-user-password]
 verify_jwt = true
+
+[functions.force-logout]
+verify_jwt = false

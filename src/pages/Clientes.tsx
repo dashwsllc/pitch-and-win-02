@@ -220,13 +220,13 @@ export default function Clientes() {
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Users className="w-8 h-8 text-primary" />
-            Clientes de Assinatura
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie seus clientes de assinatura mensal
-          </p>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <Users className="w-8 h-8 text-primary" />
+              Meus Clientes
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Gerencie seus clientes de assinatura mensal
+            </p>
         </div>
 
         {/* Formulário de Cadastro */}
@@ -326,7 +326,7 @@ export default function Clientes() {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <ShoppingBag className="w-5 h-5" />
-              Todos os Clientes ({vendasClientes.length})
+              Meus Clientes ({vendasClientes.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -396,7 +396,7 @@ export default function Clientes() {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <Users className="w-5 h-5" />
-              Lista de Assinaturas ({assinaturas.length})
+              Minhas Assinaturas ({assinaturas.length})
             </CardTitle>
           </CardHeader>
           <CardContent>

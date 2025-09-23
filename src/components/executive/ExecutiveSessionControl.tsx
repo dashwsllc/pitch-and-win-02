@@ -98,33 +98,28 @@ export function ExecutiveSessionControl() {
     setLoggingOut(userId)
     
     try {
-      // Nota: O Supabase não permite forçar logout de outros usuários através do client
-      // Esta funcionalidade requereria uma edge function com privilégios administrativos
-      
-      toast({
-        title: 'Funcionalidade em desenvolvimento',
-        description: 'O controle de sessões remotas será implementado em breve.',
-        variant: 'destructive'
+      const { data, error } = await supabase.functions.invoke('force-logout', {
+        body: { userId }
       })
 
-      // Por enquanto, apenas simular
-      setTimeout(() => {
-        toast({
-          title: 'Usuário notificado',
-          description: `${userEmail} foi notificado para fazer logout.`
-        })
-        setLoggingOut(null)
-      }, 2000)
+      if (error) {
+        throw error
+      }
+
+      toast({
+        title: 'Logout forçado com sucesso!',
+        description: `${userEmail} foi desconectado do sistema.`
+      })
 
     } catch (error) {
       console.error('Error forcing logout:', error)
       toast({
-        title: 'Erro',
+        title: 'Erro ao forçar logout',
         description: 'Não foi possível forçar o logout. Tente novamente.',
         variant: 'destructive'
       })
     } finally {
-      setTimeout(() => setLoggingOut(null), 2000)
+      setLoggingOut(null)
     }
   }
 
