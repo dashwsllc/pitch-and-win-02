@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useDocuments, Document } from '@/hooks/useDocuments'
 import { AddDocumentDialog } from '@/components/documents/AddDocumentDialog'
+import { EditDocumentDialog } from '@/components/documents/EditDocumentDialog'
 import { useRoles } from '@/hooks/useRoles'
 
 // Mock data para documentos com datas de setembro 2025
@@ -101,10 +102,13 @@ export default function Documentos() {
   }
 
   const DocumentCard = ({ document, isRealDocument = false }: { document: Document | any, isRealDocument?: boolean }) => (
-    <Card className="border-border/50 hover:border-border transition-colors cursor-pointer" onClick={() => window.open(isRealDocument ? document.link_url : document.link_url, '_blank')}>
+    <Card className="border-border/50 hover:border-border transition-colors">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-          <div className="flex items-start gap-3 flex-1 w-full">
+          <div 
+            className="flex items-start gap-3 flex-1 w-full cursor-pointer" 
+            onClick={() => window.open(isRealDocument ? document.link_url : document.link_url, '_blank')}
+          >
             <div className="w-10 h-10 rounded-lg bg-gradient-primary/10 flex items-center justify-center flex-shrink-0">
               <Link className="w-5 h-5 text-primary" />
             </div>
@@ -127,6 +131,13 @@ export default function Documentos() {
             </div>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            {isExecutive && (
+              <EditDocumentDialog 
+                document={document}
+                isRealDocument={isRealDocument}
+                onUpdate={refetch}
+              />
+            )}
             <Button 
               variant="outline" 
               size="sm" 
