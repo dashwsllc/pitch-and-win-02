@@ -12,8 +12,7 @@ import {
   Target,
   MessageSquare,
   ShoppingCart,
-  ChevronDown,
-  ChevronRight
+  UserCheck
 } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -21,6 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Executive", url: "/executive", icon: Shield },
+  { title: "Listagem de Membros", url: "/team-members", icon: UserCheck },
   { 
     title: "Formulários", 
     icon: ClipboardList, 
@@ -101,26 +101,28 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                 >
                   <item.icon className="w-5 h-5" />
                 </button>
-                {isFormularioActive(item.submenu) && (
-                  <div className="mt-2 flex flex-col gap-2 p-2 border border-sidebar-primary/20 rounded-lg bg-sidebar-accent/20">
-                    {item.submenu.map((subItem) => (
-                      <NavLink
-                        key={subItem.title}
-                        to={subItem.url}
-                        className={({ isActive }) =>
-                          `flex items-center justify-center w-12 h-10 rounded-lg transition-all ${
-                            isActive
-                              ? "bg-sidebar-accent text-sidebar-primary border border-sidebar-primary/20"
-                              : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-                          }`
-                        }
-                        title={subItem.title}
-                      >
-                        <subItem.icon className="w-4 h-4" />
-                      </NavLink>
-                    ))}
-                  </div>
-                )}
+                <div className="h-[120px] mt-2 flex items-start justify-center">
+                  {isFormularioActive(item.submenu) && (
+                    <div className="flex flex-col gap-2 p-2 border border-sidebar-primary/20 rounded-lg bg-sidebar-accent/20">
+                      {item.submenu.map((subItem) => (
+                        <NavLink
+                          key={subItem.title}
+                          to={subItem.url}
+                          className={({ isActive }) =>
+                            `flex items-center justify-center w-12 h-10 rounded-lg transition-all ${
+                              isActive
+                                ? "bg-sidebar-accent text-sidebar-primary border border-sidebar-primary/20"
+                                : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                            }`
+                          }
+                          title={subItem.title}
+                        >
+                          <subItem.icon className="w-4 h-4" />
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )
           }

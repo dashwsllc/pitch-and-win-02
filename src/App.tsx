@@ -25,6 +25,7 @@ import WorkBoard from "@/pages/WorkBoard"
 import Perfil from "@/pages/Perfil"
 import Configuracoes from "@/pages/Configuracoes"
 import Formularios from "@/pages/Formularios"
+import TeamMembers from "./pages/TeamMembers"
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -111,6 +112,11 @@ const App = () => (
                 <ProtectedRoute>
                   <Configuracoes />
                 </ProtectedRoute>
+              } />
+              <Route path="/team-members" element={
+                <ExecutiveProtectedRoute>
+                  <TeamMembers />
+                </ExecutiveProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
