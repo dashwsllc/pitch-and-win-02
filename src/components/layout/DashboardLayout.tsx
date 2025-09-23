@@ -20,9 +20,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <ExecutiveAppSidebar isExecutive={isExecutive} />
       
       <div className="ml-16 min-h-screen flex flex-col overflow-x-hidden">
-        <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
+        <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
           <div className="flex items-center justify-between h-full px-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
               <h1 className="text-xl font-semibold text-foreground">
                 {isExecutivePage ? 'Dashboard Executive' : 'System'}
               </h1>
@@ -53,7 +53,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               )}
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Button asChild variant="ghost" size="sm">
                 <Link to="/ranking">
                   <Trophy className="w-4 h-4" />

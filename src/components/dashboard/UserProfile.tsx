@@ -20,14 +20,21 @@ export function UserProfile() {
 
   const handleSignOut = async () => {
     try {
-      // Evitar cliques múltiplos
+      // Evitar cliques múltiplos e mostrar estado de carregamento
       const button = document.querySelector('[data-logout-button]') as HTMLButtonElement
       if (button) {
         button.disabled = true
         button.textContent = 'Saindo...'
       }
       
+      // Timeout para evitar travamento
+      const timeoutId = setTimeout(() => {
+        console.warn('Logout timeout - forcing redirect')
+        window.location.href = '/auth'
+      }, 3000)
+      
       await signOut()
+      clearTimeout(timeoutId)
     } catch (error) {
       console.error('Logout error:', error)
       // Forçar redirecionamento mesmo com erro
@@ -44,7 +51,7 @@ export function UserProfile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full shrink-0">
           <Avatar className="h-10 w-10 border-2 border-primary/20">
             <AvatarImage 
               src={profile?.avatar_url || ""} 
@@ -58,7 +65,13 @@ export function UserProfile() {
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent 
+        className="w-56 bg-popover border border-border" 
+        align="end" 
+        forceMount
+        avoidCollisions={true}
+        collisionPadding={16}
+      >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{displayName}</p>
