@@ -66,11 +66,9 @@ export function UserProfile() {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent 
-        className="w-56 bg-popover border border-border" 
+        className="w-56" 
         align="end" 
-        forceMount
-        avoidCollisions={true}
-        collisionPadding={16}
+        sideOffset={8}
       >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">

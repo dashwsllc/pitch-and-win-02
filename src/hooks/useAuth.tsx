@@ -17,7 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  let heartbeat: number | undefined
+  let heartbeat: NodeJS.Timeout | undefined
 
   useEffect(() => {
     let mounted = true
@@ -111,15 +111,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await updateLastSeen(uid)
             
             // Configurar heartbeat
-            if (heartbeat) window.clearInterval(heartbeat)
-            heartbeat = window.setInterval(() => updateLastSeen(uid), 300_000)
+            if (heartbeat) clearInterval(heartbeat)
+            heartbeat = setInterval(() => updateLastSeen(uid), 300_000)
           } catch (error) {
             console.error('Error in auth state change:', error)
           }
         }
         
         if (event === 'SIGNED_OUT') {
-          if (heartbeat) window.clearInterval(heartbeat)
+          if (heartbeat) clearInterval(heartbeat)
+          heartbeat = undefined
           setUser(null)
           setSession(null)
         }
@@ -130,7 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false
-      if (heartbeat) window.clearInterval(heartbeat)
+      if (heartbeat) clearInterval(heartbeat)
+      heartbeat = undefined
       subscription.unsubscribe()
     }
   }, [])
@@ -163,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Limpar estado local primeiro para evitar loops
       if (heartbeat) {
-        window.clearInterval(heartbeat)
+        clearInterval(heartbeat)
         heartbeat = undefined
       }
       
@@ -191,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null)
       setSession(null)
       if (heartbeat) {
-        window.clearInterval(heartbeat)
+        clearInterval(heartbeat)
         heartbeat = undefined
       }
       window.location.href = '/auth'
