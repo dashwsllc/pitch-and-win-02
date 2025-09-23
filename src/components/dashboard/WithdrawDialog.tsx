@@ -20,11 +20,11 @@ interface WithdrawDialogProps {
 }
 
 export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawDialogProps) {
+  const { user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState("")
   const [pixKey, setPixKey] = useState("")
   const [loading, setLoading] = useState(false)
-  const { user } = useAuth()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {

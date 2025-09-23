@@ -3,16 +3,24 @@ import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 
 interface CommissionData {
+  totalSales: number
+  totalRevenue: number
+  commissionRate: number
   totalCommissions: number
   availableForWithdrawal: number
   withdrawnAmount: number
+  pendingWithdrawals: number
 }
 
 export function useCommissionData() {
   const [data, setData] = useState<CommissionData>({
+    totalSales: 0,
+    totalRevenue: 0,
+    commissionRate: 0.10, // 10%
     totalCommissions: 0,
     availableForWithdrawal: 0,
     withdrawnAmount: 0,
+    pendingWithdrawals: 0
   })
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
@@ -21,7 +29,10 @@ export function useCommissionData() {
     if (!user) return
 
     try {
-      // Buscar todas as vendas do usuário para calcular comissão total (10%)
+      console.log('Fetching commission data for user:', user.id)
+      setLoading(true)
+
+      // Buscar todas as vendas do usuário
       const { data: vendas, error: vendasError } = await supabase
         .from('vendas')
         .select('valor_venda')
@@ -29,10 +40,16 @@ export function useCommissionData() {
 
       if (vendasError) throw vendasError
 
-      const totalVendas = vendas?.reduce((sum, venda) => sum + parseFloat(venda.valor_venda.toString()), 0) || 0
-      const totalCommissions = totalVendas * 0.10
+      // Buscar saques pendentes
+      const { data: saquesPendentes, error: saquesError } = await supabase
+        .from('saques')
+        .select('valor_solicitado')
+        .eq('user_id', user.id)
+        .eq('status', 'pendente')
 
-      // Buscar saldo atual
+      if (saquesError) throw saquesError
+
+      // Buscar saldos
       const { data: saldo, error: saldoError } = await supabase
         .from('saldos_disponiveis')
         .select('*')
@@ -41,46 +58,32 @@ export function useCommissionData() {
 
       if (saldoError) throw saldoError
 
-      // Buscar saques pendentes para reservar valor
-      const { data: saquesPendentes, error: pendError } = await supabase
-        .from('saques')
-        .select('valor_solicitado')
-        .eq('user_id', user.id)
-        .eq('status', 'pendente')
+      // Calcular dados
+      const totalSales = vendas?.length || 0
+      const totalRevenue = vendas?.reduce((sum, venda) => sum + Number(venda.valor_venda), 0) || 0
+      const totalCommissions = totalRevenue * 0.10 // 10% de comissão
+      const withdrawnAmount = Number(saldo?.valor_sacado || 0)
+      const pendingWithdrawals = saquesPendentes?.reduce((sum, saque) => sum + Number(saque.valor_solicitado), 0) || 0
+      const availableForWithdrawal = Math.max(0, totalCommissions - withdrawnAmount - pendingWithdrawals)
 
-      if (pendError) throw pendError
-
-      const pendingAmount = saquesPendentes?.reduce((sum, s) => sum + parseFloat(s.valor_solicitado.toString()), 0) || 0
-      const currentWithdrawn = parseFloat((saldo?.valor_sacado ?? 0).toString())
-      const availableComputed = Math.max(0, totalCommissions - currentWithdrawn - pendingAmount)
-
-      setData({
+      console.log('Commission calculation:', {
+        totalSales,
+        totalRevenue,
         totalCommissions,
-        availableForWithdrawal: availableComputed,
-        withdrawnAmount: currentWithdrawn,
+        withdrawnAmount,
+        pendingWithdrawals,
+        availableForWithdrawal
       })
 
-      // Sincronizar tabela de saldos com os valores corretos
-      if (saldo) {
-        const { error: updateError } = await supabase
-          .from('saldos_disponiveis')
-          .update({ 
-            valor_total_comissoes: totalCommissions,
-            valor_liberado_para_saque: availableComputed,
-          })
-          .eq('user_id', user.id)
-        if (updateError) console.error('Error updating balance:', updateError)
-      } else {
-        const { error: insertError } = await supabase
-          .from('saldos_disponiveis')
-          .insert({
-            user_id: user.id,
-            valor_total_comissoes: totalCommissions,
-            valor_liberado_para_saque: availableComputed,
-            valor_sacado: 0,
-          })
-        if (insertError) console.error('Error inserting balance:', insertError)
-      }
+      setData({
+        totalSales,
+        totalRevenue,
+        commissionRate: 0.10,
+        totalCommissions,
+        availableForWithdrawal,
+        withdrawnAmount,
+        pendingWithdrawals
+      })
 
     } catch (error) {
       console.error('Error fetching commission data:', error)

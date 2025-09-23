@@ -50,6 +50,8 @@ export function ExecutiveWithdrawalManagement() {
 
   const fetchWithdrawals = async () => {
     try {
+      console.log('Fetching withdrawals for executives...')
+      
       const { data: saques, error: saquesError } = await supabase
         .from('saques')
         .select('*')
@@ -60,12 +62,20 @@ export function ExecutiveWithdrawalManagement() {
         throw saquesError
       }
 
-      console.log('Withdrawals data:', saques)
+      console.log('Raw withdrawals data:', saques)
 
-      const userIds = Array.from(new Set((saques || []).map((s) => s.user_id)))
+      if (!saques || saques.length === 0) {
+        console.log('No withdrawals found')
+        setWithdrawals([])
+        return
+      }
+
+      const userIds = Array.from(new Set(saques.map((s) => s.user_id)))
       let profilesMap = new Map<string, { display_name: string | null; user_id: string }>()
 
       if (userIds.length > 0) {
+        console.log('Fetching profiles for user IDs:', userIds)
+        
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('user_id, display_name')
@@ -74,16 +84,17 @@ export function ExecutiveWithdrawalManagement() {
         if (profilesError) {
           console.error('Error fetching profiles:', profilesError)
         } else {
+          console.log('Profiles fetched:', profiles)
           profiles?.forEach((p) => profilesMap.set(p.user_id, { user_id: p.user_id, display_name: p.display_name }))
         }
       }
 
-      const merged = (saques || []).map((s) => ({
+      const merged = saques.map((s) => ({
         ...s,
         profile: profilesMap.get(s.user_id) || { user_id: s.user_id, display_name: `Vendedor ${s.user_id.substring(0, 8)}` }
       })) as WithdrawalRequest[]
 
-      console.log('Merged withdrawals:', merged)
+      console.log('Final merged withdrawals:', merged)
       setWithdrawals(merged)
     } catch (error) {
       console.error('Error fetching withdrawals:', error)

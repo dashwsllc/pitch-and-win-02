@@ -357,6 +357,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_and_update_commissions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
