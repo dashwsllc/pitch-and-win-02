@@ -105,7 +105,8 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                   <item.icon className="w-5 h-5" />
                 </button>
                 {openForm && (
-                  <div className="flex flex-col gap-1 mt-2 ml-1">
+                  <div className="flex flex-col gap-1 mt-2 ml-1 p-2 bg-sidebar-accent/20 rounded-lg border border-sidebar-primary/10">
+                    <div className="text-xs text-sidebar-primary font-medium mb-1 px-1">Formulários</div>
                     {item.submenu.map((subItem) => (
                       <NavLink
                         key={subItem.title}

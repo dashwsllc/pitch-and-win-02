@@ -255,7 +255,7 @@ export default function Vendas() {
                       </div>
                       
                       <div className="text-right flex flex-col items-end">
-                        <div className="text-base sm:text-lg md:text-2xl font-bold text-green-600 mb-1">
+                        <div className="text-base font-bold text-green-600 mb-1">
                           {formatCurrency(venda.valor_venda)}
                         </div>
                         <Badge variant="outline" className="text-xs text-muted-foreground">
