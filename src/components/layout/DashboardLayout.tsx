@@ -24,7 +24,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="flex items-center justify-between h-full px-6">
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold text-foreground">
-                {isExecutivePage ? 'Dashboard Executive' : ''}
+                {isExecutivePage ? 'Dashboard Executive' : 'System'}
               </h1>
               
               {isExecutive && (

@@ -79,41 +79,38 @@ export function useAllUsers() {
 
   const fetchAllUsers = async () => {
     try {
-      // Buscar todos os usuários do auth.users e seus perfis
-      const { data: profiles, error: profilesError } = await supabase
+      // Buscar dados diretos com JOIN para garantir todos os usuários
+      const { data: allUsersData, error: usersError } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          user_roles!left (
+            role
+          )
+        `)
         .order('created_at', { ascending: false })
 
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError)
+      if (usersError) {
+        console.error('Error fetching all users:', usersError)
         return
       }
 
-      // Buscar todos os roles existentes
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role')
+      console.log('Raw users data:', allUsersData)
 
-      if (rolesError) {
-        console.error('Error fetching roles:', rolesError)
-        return
-      }
-
-      const rolesByUser = new Map<string, string[]>()
-      ;(roles || []).forEach(r => {
-        const list = rolesByUser.get(r.user_id) || []
-        list.push(r.role)
-        rolesByUser.set(r.user_id, list)
+      // Mapear os dados para o formato esperado
+      const mappedUsers = (allUsersData || []).map((user: any) => {
+        const userRoles = user.user_roles || []
+        const roles = userRoles.map((ur: any) => ur.role).filter(Boolean)
+        
+        return {
+          ...user,
+          roles: roles.length > 0 ? roles : ['seller'],
+          role: roles.length > 0 ? roles[0] : 'seller'
+        }
       })
 
-      const merged = (profiles || []).map((p) => ({
-        ...p,
-        roles: rolesByUser.get(p.user_id) || ['seller'],
-        role: (rolesByUser.get(p.user_id) || ['seller'])[0]
-      }))
-
-      setUsers(merged)
+      console.log('Mapped users:', mappedUsers)
+      setUsers(mappedUsers)
     } catch (error) {
       console.error('Error in fetchAllUsers:', error)
     } finally {
