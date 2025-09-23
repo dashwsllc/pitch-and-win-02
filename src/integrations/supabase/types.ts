@@ -380,6 +380,10 @@ export type Database = {
         Args: { p_user_id: string; p_withdrawal_amount: number }
         Returns: undefined
       }
+      recalculate_all_balances: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "seller" | "executive"
