@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 
@@ -17,125 +17,117 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  let heartbeat: NodeJS.Timeout | undefined
+  const heartbeatRef = useRef<NodeJS.Timeout | null>(null)
+  const mountedRef = useRef(true)
+  const lastUserIdRef = useRef<string | null>(null)
+
+  // Função para limpar heartbeat de forma segura
+  const clearHeartbeat = useCallback(() => {
+    if (heartbeatRef.current) {
+      clearInterval(heartbeatRef.current)
+      heartbeatRef.current = null
+    }
+  }, [])
+
+  // Função otimizada para atualizar last_seen
+  const updateLastSeen = useCallback(async (uid: string) => {
+    try {
+      if (!mountedRef.current) return
+      
+      await supabase
+        .from('profiles')
+        .update({ last_seen_at: new Date().toISOString() })
+        .eq('user_id', uid)
+    } catch (e) {
+      console.error('Erro ao atualizar last_seen_at', e)
+    }
+  }, [])
+
+  // Função para configurar heartbeat
+  const setupHeartbeat = useCallback((uid: string) => {
+    clearHeartbeat()
+    if (mountedRef.current) {
+      heartbeatRef.current = setInterval(() => {
+        if (mountedRef.current) {
+          updateLastSeen(uid)
+        }
+      }, 300_000) // 5 minutos
+    }
+  }, [clearHeartbeat, updateLastSeen])
 
   useEffect(() => {
-    let mounted = true
-
-    const updateLastSeen = async (uid: string) => {
-      try {
-        // Só atualiza se passou mais de 1 minuto desde a última atualização
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('last_seen_at')
-          .eq('user_id', uid)
-          .single()
-
-        if (profile) {
-          const lastSeen = new Date(profile.last_seen_at)
-          const now = new Date()
-          const timeDiff = now.getTime() - lastSeen.getTime()
-          
-          // Só atualiza se passou mais de 60 segundos (1 minuto)
-          if (timeDiff > 60000) {
-            await supabase
-              .from('profiles')
-              .update({ last_seen_at: now.toISOString() })
-              .eq('user_id', uid)
-          }
-        }
-      } catch (e) {
-        console.error('Erro ao atualizar last_seen_at', e)
-      }
-    }
+    let authSubscription: any = null
 
     const initializeAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error('Error getting initial session:', error)
-          // Se houver erro na sessão, limpar tudo
-          if (mounted) {
-            setSession(null)
-            setUser(null)
+        // Configurar listener primeiro
+        authSubscription = supabase.auth.onAuthStateChange(
+          (event, session) => {
+            if (!mountedRef.current) return
+
+            console.log('Auth event:', event)
+            
+            const newUser = session?.user ?? null
+            const userId = newUser?.id
+
+            // Evitar atualizações desnecessárias
+            if (lastUserIdRef.current !== userId) {
+              setSession(session)
+              setUser(newUser)
+              lastUserIdRef.current = userId
+              
+              if (event === 'SIGNED_IN' && userId) {
+                // Configurar heartbeat apenas para novos logins
+                setTimeout(() => {
+                  if (mountedRef.current) {
+                    updateLastSeen(userId)
+                    setupHeartbeat(userId)
+                  }
+                }, 100)
+              } else if (event === 'SIGNED_OUT') {
+                clearHeartbeat()
+                lastUserIdRef.current = null
+              }
+            }
+            
             setLoading(false)
           }
-          return
-        }
+        )
+
+        // Buscar sessão inicial
+        const { data: { session } } = await supabase.auth.getSession()
         
-        if (mounted) {
+        if (mountedRef.current) {
+          const userId = session?.user?.id
           setSession(session)
           setUser(session?.user ?? null)
+          lastUserIdRef.current = userId ?? null
+          
+          if (userId) {
+            updateLastSeen(userId)
+            setupHeartbeat(userId)
+          }
+          
           setLoading(false)
         }
       } catch (error) {
         console.error('Error initializing auth:', error)
-        if (mounted) {
-          setSession(null)
-          setUser(null)
+        if (mountedRef.current) {
           setLoading(false)
         }
       }
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email)
-        
-        if (!mounted) return
-        
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-        
-        // Gerenciar heartbeat e verificações de usuário
-        if (event === 'SIGNED_IN' && session?.user?.id) {
-          const uid = session.user.id
-          
-          try {
-            // Verificar se usuário não está suspenso
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('suspended')
-              .eq('user_id', uid)
-              .single()
-
-            if (profile?.suspended) {
-              console.log('User is suspended, forcing logout')
-              await supabase.auth.signOut()
-              return
-            }
-
-            // Atualizar last_seen_at
-            await updateLastSeen(uid)
-            
-            // Configurar heartbeat
-            if (heartbeat) clearInterval(heartbeat)
-            heartbeat = setInterval(() => updateLastSeen(uid), 300_000)
-          } catch (error) {
-            console.error('Error in auth state change:', error)
-          }
-        }
-        
-        if (event === 'SIGNED_OUT') {
-          if (heartbeat) clearInterval(heartbeat)
-          heartbeat = undefined
-          setUser(null)
-          setSession(null)
-        }
-      }
-    )
-
     initializeAuth()
 
     return () => {
-      mounted = false
-      if (heartbeat) clearInterval(heartbeat)
-      heartbeat = undefined
-      subscription.unsubscribe()
+      mountedRef.current = false
+      clearHeartbeat()
+      if (authSubscription) {
+        authSubscription.data?.subscription?.unsubscribe()
+      }
     }
-  }, [])
+  }, [clearHeartbeat, setupHeartbeat, updateLastSeen])
 
   const signUp = async (email: string, password: string, displayName?: string) => {
     const redirectUrl = `${window.location.origin}/`
@@ -161,44 +153,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error }
   }
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
-      // Limpar estado local primeiro para evitar loops
-      if (heartbeat) {
-        clearInterval(heartbeat)
-        heartbeat = undefined
-      }
+      clearHeartbeat()
       
-      // Tentar fazer logout do Supabase com timeout
-      const logoutPromise = supabase.auth.signOut()
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Logout timeout')), 5000)
-      )
+      // Fazer logout de forma simples
+      await supabase.auth.signOut()
       
-      try {
-        await Promise.race([logoutPromise, timeoutPromise])
-      } catch (error) {
-        console.warn('Logout warning (proceeding anyway):', error)
-      }
-      
-      // Limpar estado sempre
+      // Limpar estado local
       setUser(null)
       setSession(null)
+      lastUserIdRef.current = null
       
-      // Redirecionar para auth sempre
+      // Redirecionar
       window.location.href = '/auth'
     } catch (error) {
       console.error('Error during logout:', error)
-      // Mesmo com erro, limpar estado e redirecionar
+      // Limpar estado mesmo com erro
+      clearHeartbeat()
       setUser(null)
       setSession(null)
-      if (heartbeat) {
-        clearInterval(heartbeat)
-        heartbeat = undefined
-      }
+      lastUserIdRef.current = null
       window.location.href = '/auth'
     }
-  }
+  }, [clearHeartbeat])
 
   return (
     <AuthContext.Provider value={{

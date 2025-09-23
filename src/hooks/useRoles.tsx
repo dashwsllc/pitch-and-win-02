@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 
@@ -17,30 +17,17 @@ export function useRoles() {
   const [loading, setLoading] = useState(true)
   const [isExecutive, setIsExecutive] = useState(false)
   const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+  const mountedRef = useRef(true)
+  const lastUserIdRef = useRef<string | null>(null)
 
-  useEffect(() => {
-    let mounted = true
-    
-    if (!user) {
+  const fetchUserRoles = useCallback(async () => {
+    if (!user || !mountedRef.current) {
       setRoles([])
       setIsExecutive(false)
       setIsSuperAdmin(false)
       setLoading(false)
       return
     }
-
-    const fetchRoles = async () => {
-      if (mounted) {
-        await fetchUserRoles()
-      }
-    }
-    
-    fetchRoles()
-    return () => { mounted = false }
-  }, [user?.id]) // Usar apenas user.id para evitar loops
-
-  const fetchUserRoles = async () => {
-    if (!user) return
 
     try {
       // Verificar se é o super admin (email específico)
@@ -57,6 +44,8 @@ export function useRoles() {
         return
       }
 
+      if (!mountedRef.current) return
+
       const userRoles = (data?.map(r => r.role) || ['seller']) as UserRole[]
       setRoles(userRoles)
       
@@ -66,11 +55,25 @@ export function useRoles() {
     } catch (error) {
       console.error('Error in fetchUserRoles:', error)
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
-  }
+  }, [user?.id, user?.email])
 
-  const hasRole = (role: UserRole) => roles.includes(role)
+  useEffect(() => {
+    // Evitar refetching desnecessário
+    if (lastUserIdRef.current !== user?.id) {
+      lastUserIdRef.current = user?.id || null
+      fetchUserRoles()
+    }
+    
+    return () => {
+      mountedRef.current = false
+    }
+  }, [user?.id, fetchUserRoles])
+
+  const hasRole = useCallback((role: UserRole) => roles.includes(role), [roles])
 
   return {
     roles,

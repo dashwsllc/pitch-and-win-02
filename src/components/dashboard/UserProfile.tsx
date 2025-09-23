@@ -20,24 +20,9 @@ export function UserProfile() {
 
   const handleSignOut = async () => {
     try {
-      // Evitar cliques múltiplos e mostrar estado de carregamento
-      const button = document.querySelector('[data-logout-button]') as HTMLButtonElement
-      if (button) {
-        button.disabled = true
-        button.textContent = 'Saindo...'
-      }
-      
-      // Timeout para evitar travamento
-      const timeoutId = setTimeout(() => {
-        console.warn('Logout timeout - forcing redirect')
-        window.location.href = '/auth'
-      }, 3000)
-      
       await signOut()
-      clearTimeout(timeoutId)
     } catch (error) {
       console.error('Logout error:', error)
-      // Forçar redirecionamento mesmo com erro
       window.location.href = '/auth'
     }
   }
@@ -49,59 +34,64 @@ export function UserProfile() {
   const displayName = profile?.display_name || user?.user_metadata?.display_name || 'Usuário'
   
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full shrink-0">
-          <Avatar className="h-10 w-10 border-2 border-primary/20">
-            <AvatarImage 
-              src={profile?.avatar_url || ""} 
-              alt={displayName}
-              className="object-cover"
-            />
-            <AvatarFallback delayMs={300} className="bg-gradient-primary text-white font-semibold">
-              {user?.email ? getInitials(user.email) : 'U'}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      
-      <DropdownMenuContent 
-        className="w-56" 
-        align="end" 
-        sideOffset={8}
-      >
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{displayName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
+    <div className="relative">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="ghost" 
+            className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent focus:ring-0 focus:ring-offset-0"
+          >
+            <Avatar className="h-10 w-10 border-2 border-primary/20">
+              <AvatarImage 
+                src={profile?.avatar_url || ""} 
+                alt={displayName}
+                className="object-cover"
+              />
+              <AvatarFallback delayMs={300} className="bg-gradient-primary text-white font-semibold">
+                {user?.email ? getInitials(user.email) : 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
         
-        <DropdownMenuSeparator />
-        
-        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/perfil')}>
-          <User className="mr-2 h-4 w-4" />
-          <span>Perfil</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/configuracoes')}>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Configurações</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuSeparator />
-        
-        <DropdownMenuItem 
-          className="cursor-pointer text-destructive focus:text-destructive"
-          onClick={handleSignOut}
-          data-logout-button
+        <DropdownMenuContent 
+          className="w-56" 
+          align="end" 
+          sideOffset={8}
+          onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Sair</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{displayName}</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user?.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/perfil')}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Perfil</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/configuracoes')}>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Configurações</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem 
+            className="cursor-pointer text-destructive focus:text-destructive"
+            onClick={handleSignOut}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Sair</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   )
 }
