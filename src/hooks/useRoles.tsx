@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 
-export type UserRole = 'seller' | 'executive'
+export type UserRole = 'seller' | 'executive' | 'super_admin'
 
 interface UserRoleData {
   id: string
@@ -30,10 +30,6 @@ export function useRoles() {
     }
 
     try {
-      // Verificar se é o super admin (email específico)
-      const isSuperAdminUser = user.email === 'fecass1507@icloud.com'
-      setIsSuperAdmin(isSuperAdminUser)
-
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
@@ -48,10 +44,8 @@ export function useRoles() {
 
       const userRoles = (data?.map(r => r.role) || ['seller']) as UserRole[]
       setRoles(userRoles)
-      
-      // Ser executive requer ter o role E ser autorizado pelo super admin (ou ser o próprio super admin)
-      const hasExecutiveRole = userRoles.includes('executive' as UserRole)
-      setIsExecutive(isSuperAdminUser || hasExecutiveRole)
+      setIsExecutive(userRoles.includes('executive'))
+      setIsSuperAdmin(userRoles.includes('super_admin'))
     } catch (error) {
       console.error('Error in fetchUserRoles:', error)
     } finally {
@@ -59,7 +53,7 @@ export function useRoles() {
         setLoading(false)
       }
     }
-  }, [user?.id, user?.email])
+  }, [user?.id])
 
   useEffect(() => {
     // Evitar refetching desnecessário
@@ -79,8 +73,8 @@ export function useRoles() {
     roles,
     isExecutive,
     isSuperAdmin,
-    hasRole,
     loading,
+    hasRole,
     refetch: fetchUserRoles
   }
 }
@@ -112,9 +106,6 @@ export function useAllUsers() {
         return
       }
 
-      console.log('Profiles data:', profilesData)
-      console.log('Roles data:', rolesData)
-
       // Criar mapa de roles por user_id
       const rolesMap = new Map<string, string[]>()
       rolesData?.forEach(roleEntry => {
@@ -134,7 +125,6 @@ export function useAllUsers() {
         }
       })
 
-      console.log('Final mapped users:', mappedUsers)
       setUsers(mappedUsers)
     } catch (error) {
       console.error('Error in fetchAllUsers:', error)
