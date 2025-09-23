@@ -1,0 +1,2 @@
+-- Update config.toml to include the send-password-reset function
+-- This will be handled separately through the config.toml file
