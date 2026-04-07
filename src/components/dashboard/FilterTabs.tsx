@@ -12,11 +12,13 @@ export function FilterTabs({ value, onValueChange }: FilterTabsProps) {
     { value: "7dias", label: "7 dias" },
     { value: "14dias", label: "14 dias" },
     { value: "30dias", label: "30 dias" },
+    { value: "60dias", label: "60 dias" },
+    { value: "90dias", label: "3 meses" },
   ]
 
   return (
     <Tabs value={value} onValueChange={onValueChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-5 bg-muted/50">
+      <TabsList className="grid w-full grid-cols-7 bg-muted/50">
         {filters.map((filter) => (
           <TabsTrigger 
             key={filter.value}
