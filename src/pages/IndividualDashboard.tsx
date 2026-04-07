@@ -10,6 +10,7 @@ import { useDashboardData } from "@/hooks/useDashboardData"
 import { useRankingDataWithMock } from "@/hooks/useRankingDataWithMock"
 import { useCommissionData } from "@/hooks/useCommissionData"
 import { useAuth } from "@/hooks/useAuth"
+import { useProfile } from "@/hooks/useProfile"
 import { CommissionCard } from "@/components/dashboard/CommissionCard"
 import { WithdrawDialog } from "@/components/dashboard/WithdrawDialog"
 import { 
@@ -25,11 +26,12 @@ import {
 export default function Dashboard() {
   const [selectedFilter, setSelectedFilter] = useState("hoje")
   const { user } = useAuth()
+  const { profile } = useProfile()
   const { metrics, loading, refetch } = useDashboardData(selectedFilter)
   const { ranking } = useRankingDataWithMock()
   const { data: commissionData, loading: commissionLoading, refetch: refetchCommission } = useCommissionData()
 
-  const userName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || "Usuário"
+  const userName = profile?.display_name || user?.user_metadata?.display_name || user?.email?.split('@')[0] || "Usuário"
   const userPosition = ranking.findIndex(r => r.isCurrentUser) + 1
 
   return (
