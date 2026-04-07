@@ -111,9 +111,6 @@ export function ParceirosCard() {
             <span className="text-sm font-semibold text-foreground">
               {fmt(totalFaturamento)}
             </span>
-            <span className="text-xs text-muted-foreground ml-2">
-              · comissão {fmt(totalComissao)}
-            </span>
           </div>
         </div>
       </CardContent>
