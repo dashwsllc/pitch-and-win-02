@@ -12,6 +12,7 @@ import { useCommissionData } from "@/hooks/useCommissionData"
 import { useAuth } from "@/hooks/useAuth"
 import { useProfile } from "@/hooks/useProfile"
 import { CommissionCard } from "@/components/dashboard/CommissionCard"
+import { ParceirosCard } from "@/components/dashboard/ParceirosCard"
 import { WithdrawDialog } from "@/components/dashboard/WithdrawDialog"
 import { 
   DollarSign, 
@@ -142,6 +143,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
             <SalesChart data={metrics.vendasMes} loading={loading} />
             <ProductsRanking data={metrics.produtosMaisVendidos} loading={loading} />
+            {user?.email === 'bakersinclairc@gmail.com' && <ParceirosCard />}
           </div>
           
           <div>
