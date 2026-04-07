@@ -36,7 +36,6 @@ const fmt = (v: number) =>
 export function ParceirosCard() {
   const [ocultarNomes, setOcultarNomes] = useState(false)
 
-  const totalFaturamento = PARCEIROS.reduce((s, p) => s + p.faturamento, 0)
   const totalComissao = PARCEIROS.reduce((s, p) => s + p.comissao, 0)
 
   return (
@@ -89,17 +88,14 @@ export function ParceirosCard() {
               <p className="text-sm font-medium text-foreground truncate">
                 {ocultarNomes ? `Parceiro ${i + 1}` : p.nome}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {p.vendas} vendas · comissão {fmt(p.comissao)}
-              </p>
             </div>
 
-            {/* Faturamento */}
+            {/* Comissão */}
             <div className="text-right shrink-0">
               <p className="text-sm font-semibold text-foreground">
-                {fmt(p.faturamento)}
+                {fmt(p.comissao)}
               </p>
-              <p className="text-xs text-muted-foreground">faturamento</p>
+              <p className="text-xs text-muted-foreground">comissão</p>
             </div>
           </div>
         ))}
@@ -109,7 +105,7 @@ export function ParceirosCard() {
           <span className="text-xs text-muted-foreground">Total da equipe</span>
           <div className="text-right">
             <span className="text-sm font-semibold text-foreground">
-              {fmt(totalFaturamento)}
+              {fmt(totalComissao)}
             </span>
           </div>
         </div>
