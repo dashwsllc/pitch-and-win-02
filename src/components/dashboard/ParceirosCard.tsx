@@ -10,7 +10,7 @@ const PARCEIROS = [
     inicial: "R",
     faturamento: 7450,
     vendas: 15,
-    comissao: 745,
+    comissao: 7450,
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const PARCEIROS = [
     inicial: "B",
     faturamento: 6800,
     vendas: 13,
-    comissao: 680,
+    comissao: 6800,
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const PARCEIROS = [
     inicial: "T",
     faturamento: 7200,
     vendas: 14,
-    comissao: 720,
+    comissao: 7200,
   },
 ]
 
