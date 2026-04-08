@@ -6,7 +6,7 @@ import { Eye, EyeOff, Users } from "lucide-react"
 const PARCEIROS = [
   {
     id: 1,
-    nome: "Rafael Mendes",
+    nome: "Breno Mendes",
     inicial: "R",
     faturamento: 7450,
     vendas: 15,
