@@ -34,7 +34,7 @@ const fmt = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v)
 
 export function ParceirosCard() {
-  const [ocultarNomes, setOcultarNomes] = useState(false)
+  const [ocultarNomes, setOcultarNomes] = useState(true)
 
   const totalComissao = PARCEIROS.reduce((s, p) => s + p.comissao, 0)
 

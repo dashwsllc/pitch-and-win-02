@@ -69,7 +69,7 @@ export function useDashboardData(dateFilter: string = "30dias") {
 
       const { start, end } = getDateRange(dateFilter)
 
-      // Buscar vendas do usuário no período
+      // Buscar vendas do usuário no período (métricas)
       const { data: vendas, error: vendasError } = await supabase
         .from('vendas')
         .select('*')
@@ -79,7 +79,7 @@ export function useDashboardData(dateFilter: string = "30dias") {
 
       if (vendasError) throw vendasError
 
-      // Buscar abordagens do usuário no período
+      // Buscar abordagens do usuário no período (métricas)
       const { data: abordagens, error: abordagensError } = await supabase
         .from('abordagens')
         .select('*')
@@ -88,6 +88,28 @@ export function useDashboardData(dateFilter: string = "30dias") {
         .lt('created_at', end.toISOString())
 
       if (abordagensError) throw abordagensError
+
+      // Buscar vendas e abordagens dos últimos 6 meses para o gráfico (sempre fixo)
+      const chart6mStart = new Date()
+      chart6mStart.setMonth(chart6mStart.getMonth() - 6)
+      chart6mStart.setDate(1)
+      chart6mStart.setHours(0, 0, 0, 0)
+
+      const { data: vendasGrafico, error: vendasGraficoError } = await supabase
+        .from('vendas')
+        .select('valor_venda, created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', chart6mStart.toISOString())
+
+      if (vendasGraficoError) throw vendasGraficoError
+
+      const { data: abordagensGrafico, error: abordagensGraficoError } = await supabase
+        .from('abordagens')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', chart6mStart.toISOString())
+
+      if (abordagensGraficoError) throw abordagensGraficoError
 
       // Calcular métricas
       const totalVendas = vendas?.reduce((sum, venda) => sum + Number(venda.valor_venda), 0) || 0
@@ -113,16 +135,16 @@ export function useDashboardData(dateFilter: string = "30dias") {
         abordagensPorMes.set(mes, 0)
       })
 
-      // Agrupar vendas por mês
-      vendas?.forEach(venda => {
+      // Agrupar vendas por mês (usa dados de 6 meses para o gráfico)
+      vendasGrafico?.forEach(venda => {
         const mes = new Date(venda.created_at).toISOString().slice(0, 7)
         if (vendasPorMes.has(mes)) {
           vendasPorMes.set(mes, vendasPorMes.get(mes) + Number(venda.valor_venda))
         }
       })
 
-      // Agrupar abordagens por mês
-      abordagens?.forEach(abordagem => {
+      // Agrupar abordagens por mês (usa dados de 6 meses para o gráfico)
+      abordagensGrafico?.forEach(abordagem => {
         const mes = new Date(abordagem.created_at).toISOString().slice(0, 7)
         if (abordagensPorMes.has(mes)) {
           abordagensPorMes.set(mes, abordagensPorMes.get(mes) + 1)
