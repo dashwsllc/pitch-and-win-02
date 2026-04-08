@@ -31,7 +31,7 @@ BEGIN
   -- =========================================================
   -- Abr 01
   (v_user_id,'O Grande Recomeço',500,'Carlos Mendes','11 98732-4501','carlos.mendes74@gmail.com','2026-04-01 09:14:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',275,'Ana Paula Ferreira','21 97654-3210','anapaula.ferreira@hotmail.com','2026-04-01 16:42:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Ana Paula Ferreira','21 97654-3210','anapaula.ferreira@hotmail.com','2026-04-01 16:42:00-03'),
   -- Abr 02
   (v_user_id,'O Grande Recomeço',2997,'Roberto Silva','11 99201-7832','roberto.silva.sp@gmail.com','2026-04-02 10:55:00-03'),
   -- Abr 03
@@ -52,16 +52,16 @@ BEGIN
   (v_user_id,'O Grande Recomeço',500,'Ricardo Santos','21 98124-6690','ricardo.santos.rj@gmail.com','2026-03-10 10:15:00-03'),
   (v_user_id,'O Grande Recomeço',500,'Andre Souza','11 97823-4460','andre.souza@gmail.com','2026-03-10 14:34:00-03'),
   -- Mar 11
-  (v_user_id,'Mentoria Jogador Milionario',275,'Leticia Martins','19 98201-5573','leticia.martins@hotmail.com','2026-03-11 09:27:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Leticia Martins','19 98201-5573','leticia.martins@hotmail.com','2026-03-11 09:27:00-03'),
   -- Mar 13
   (v_user_id,'O Grande Recomeço',2997,'Felipe Castro','11 96789-2234','felipe.castro.sp@gmail.com','2026-03-13 11:40:00-03'),
   (v_user_id,'O Grande Recomeço',500,'Bruna Nunes','31 97456-8890','bruna.nunes.bh@gmail.com','2026-03-13 16:11:00-03'),
   -- Mar 15
   (v_user_id,'O Grande Recomeço',500,'Thiago Barbosa','47 98345-7712','thiago.barbosa@gmail.com','2026-03-15 09:55:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',275,'Vanessa Carvalho','21 97213-5543','vanessa.carvalho@gmail.com','2026-03-15 15:30:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Vanessa Carvalho','21 97213-5543','vanessa.carvalho@gmail.com','2026-03-15 15:30:00-03'),
   -- Mar 17
   (v_user_id,'O Grande Recomeço',500,'Leandro Melo','11 99045-6678','leandro.melo@hotmail.com','2026-03-17 10:08:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',250,'Cristina Vieira','85 98712-3345','cristina.vieira.ce@gmail.com','2026-03-17 15:17:00-03'),
+  (v_user_id,'O Grande Recomeço',250,'Cristina Vieira','85 98712-3345','cristina.vieira.ce@gmail.com','2026-03-17 15:17:00-03'),
   -- Mar 19
   (v_user_id,'O Grande Recomeço',500,'Diego Gomes','11 97654-2201','diego.gomes.sp@gmail.com','2026-03-19 11:42:00-03'),
   -- Mar 21
@@ -89,7 +89,7 @@ BEGIN
   (v_user_id,'O Grande Recomeço',500,'Flavio Cunha','61 97543-8890','flavio.cunha@gmail.com','2026-01-09 10:03:00-03'),
   -- Jan 10
   (v_user_id,'O Grande Recomeço',2997,'Monica Borges','11 99321-6645','monica.borges@hotmail.com','2026-01-10 09:51:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',275,'Wellington Sousa','31 98654-2278','wellington.sousa@gmail.com','2026-01-10 14:27:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Wellington Sousa','31 98654-2278','wellington.sousa@gmail.com','2026-01-10 14:27:00-03'),
   -- Jan 12
   (v_user_id,'O Grande Recomeço',500,'Priscila Fonseca','21 96789-5534','priscila.fonseca@gmail.com','2026-01-12 09:15:00-03'),
   (v_user_id,'O Grande Recomeço',500,'Renato Andrade','11 97432-1123','renato.andrade@gmail.com','2026-01-12 16:48:00-03'),
@@ -100,19 +100,19 @@ BEGIN
   (v_user_id,'O Grande Recomeço',2997,'Valeria Matos','41 97654-3389','valeria.matos@gmail.com','2026-01-14 15:22:00-03'),
   -- Jan 15
   (v_user_id,'O Grande Recomeço',500,'Anderson Duarte','51 98765-1123','anderson.duarte@gmail.com','2026-01-15 09:47:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',275,'Larissa Guimaraes','11 96543-8871','larissa.guimaraes@gmail.com','2026-01-15 16:40:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Larissa Guimaraes','11 96543-8871','larissa.guimaraes@gmail.com','2026-01-15 16:40:00-03'),
   -- Jan 16
   (v_user_id,'O Grande Recomeço',500,'Elaine Queiroz','31 98901-4423','elaine.queiroz@gmail.com','2026-01-16 10:05:00-03'),
   -- Jan 19
   (v_user_id,'O Grande Recomeço',500,'Fabio Coelho','11 99012-7845','fabio.coelho@gmail.com','2026-01-19 09:18:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',275,'Maristela Reis','62 97345-6678','maristela.reis@gmail.com','2026-01-19 14:45:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Maristela Reis','62 97345-6678','maristela.reis@gmail.com','2026-01-19 14:45:00-03'),
   -- Jan 20
   (v_user_id,'O Grande Recomeço',500,'Gustavo Paiva','11 98123-3312','gustavo.paiva@gmail.com','2026-01-20 09:52:00-03'),
   -- Jan 21
   (v_user_id,'O Grande Recomeço',500,'Otavio Teles','11 96789-8834','otavio.teles@outlook.com','2026-01-21 11:28:00-03'),
   (v_user_id,'O Grande Recomeço',500,'Sueli Magalhaes','71 98432-5567','sueli.magalhaes@gmail.com','2026-01-21 17:04:00-03'),
   -- Jan 22
-  (v_user_id,'Mentoria Jogador Milionario',250,'Diogo Leal','19 97654-3301','diogo.leal@gmail.com','2026-01-22 09:37:00-03'),
+  (v_user_id,'O Grande Recomeço',250,'Diogo Leal','19 97654-3301','diogo.leal@gmail.com','2026-01-22 09:37:00-03'),
   (v_user_id,'O Grande Recomeço',500,'Rosana Tavares','11 99234-6678','rosana.tavares@gmail.com','2026-01-22 15:22:00-03'),
   -- Jan 23
   (v_user_id,'O Grande Recomeço',500,'Cintia Vasconcelos','11 96789-7745','cintia.vasconcelos@gmail.com','2026-01-23 12:58:00-03'),
@@ -133,10 +133,10 @@ BEGIN
   -- Feb 04
   (v_user_id,'O Grande Recomeço',500,'Vera Siqueira','11 97432-2245','vera.siqueira@gmail.com','2026-02-04 10:52:00-03'),
   -- Feb 05
-  (v_user_id,'Mentoria Jogador Milionario',275,'Cristiano Neves','85 99345-1123','cristiano.neves@gmail.com','2026-02-05 09:44:00-03'),
+  (v_user_id,'O Grande Recomeço',275,'Cristiano Neves','85 99345-1123','cristiano.neves@gmail.com','2026-02-05 09:44:00-03'),
   -- Feb 09
   (v_user_id,'O Grande Recomeço',2997,'Nilton Barreto','21 98123-6634','nilton.barreto@gmail.com','2026-02-09 11:18:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',250,'Elisa Machado','11 96789-5512','elisa.machado@gmail.com','2026-02-09 16:23:00-03'),
+  (v_user_id,'O Grande Recomeço',250,'Elisa Machado','11 96789-5512','elisa.machado@gmail.com','2026-02-09 16:23:00-03'),
   -- Feb 10
   (v_user_id,'O Grande Recomeço',500,'Rogerio Coutinho','31 97654-3378','rogerio.coutinho@gmail.com','2026-02-10 09:36:00-03'),
   -- Feb 11
@@ -155,7 +155,7 @@ BEGIN
   (v_user_id,'O Grande Recomeço',500,'Sebastiao Valente','31 99234-7789','sebastiao.valente@gmail.com','2026-02-19 17:02:00-03'),
   -- Feb 23
   (v_user_id,'O Grande Recomeço',500,'Eunice Furtado','41 97345-3301','eunice.furtado@gmail.com','2026-02-23 09:28:00-03'),
-  (v_user_id,'Mentoria Jogador Milionario',250,'Adelino Cruz','11 96789-8867','adelino.cruz@gmail.com','2026-02-23 14:50:00-03'),
+  (v_user_id,'O Grande Recomeço',250,'Adelino Cruz','11 96789-8867','adelino.cruz@gmail.com','2026-02-23 14:50:00-03'),
   -- Feb 24
   (v_user_id,'O Grande Recomeço',500,'Herbert Campelo','11 99012-5578','herbert.campelo@gmail.com','2026-02-24 09:42:00-03'),
   -- Feb 25
