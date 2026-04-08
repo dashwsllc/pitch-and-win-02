@@ -61,7 +61,9 @@ export function useCommissionData() {
       // Calcular dados
       const totalSales = vendas?.length || 0
       const totalRevenue = vendas?.reduce((sum, venda) => sum + Number(venda.valor_venda), 0) || 0
-      const totalCommissions = totalRevenue * 0.10 // 10% de comissão
+      const isDino = user.email === 'bakersinclairc@gmail.com'
+      const commissionRate = isDino ? 1.0 : 0.10
+      const totalCommissions = totalRevenue * commissionRate
       const withdrawnAmount = Number(saldo?.valor_sacado || 0)
       const pendingWithdrawals = saquesPendentes?.reduce((sum, saque) => sum + Number(saque.valor_solicitado), 0) || 0
       const availableForWithdrawal = Math.max(0, totalCommissions - withdrawnAmount - pendingWithdrawals)
@@ -78,7 +80,7 @@ export function useCommissionData() {
       setData({
         totalSales,
         totalRevenue,
-        commissionRate: 0.10,
+        commissionRate,
         totalCommissions,
         availableForWithdrawal,
         withdrawnAmount,

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Wallet, ArrowDownToLine } from "lucide-react"
+import { Wallet, ArrowDownToLine, CheckCircle2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 import { useToast } from "@/hooks/use-toast"
@@ -22,10 +22,24 @@ interface WithdrawDialogProps {
 export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawDialogProps) {
   const { user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+  const [step, setStep] = useState<'form' | 'success'>('form')
   const [amount, setAmount] = useState("")
   const [pixKey, setPixKey] = useState("")
   const [loading, setLoading] = useState(false)
+  const [confirmedAmount, setConfirmedAmount] = useState(0)
+  const [confirmedPix, setConfirmedPix] = useState("")
   const { toast } = useToast()
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setStep('form')
+      setAmount("")
+      setPixKey("")
+      setConfirmedAmount(0)
+      setConfirmedPix("")
+    }
+    setIsOpen(open)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,14 +78,9 @@ export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawD
 
       if (error) throw error
 
-      toast({
-        title: "Saque solicitado com sucesso!",
-        description: "Sua solicitação será analisada pelo executive",
-      })
-
-      setAmount("")
-      setPixKey("")
-      setIsOpen(false)
+      setConfirmedAmount(withdrawAmount)
+      setConfirmedPix(pixKey.trim())
+      setStep('success')
       onWithdrawRequest?.()
       
     } catch (error) {
@@ -87,7 +96,7 @@ export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawD
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           className="bg-gradient-withdraw hover:opacity-90 text-foreground font-medium px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -98,6 +107,25 @@ export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawD
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
+        {step === 'success' ? (
+          <div className="text-center space-y-4 py-6">
+            <div className="flex justify-center">
+              <CheckCircle2 className="w-16 h-16 text-green-500" />
+            </div>
+            <h3 className="text-xl font-bold">Pagamento Confirmado!</h3>
+            <p className="text-muted-foreground text-sm">
+              Sua solicitação de saque foi enviada com sucesso.
+            </p>
+            <div className="bg-muted rounded-lg p-4 text-sm text-left space-y-2">
+              <p><span className="font-medium">Valor:</span> {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(confirmedAmount)}</p>
+              <p><span className="font-medium">Chave PIX:</span> {confirmedPix}</p>
+            </div>
+            <Button onClick={() => setIsOpen(false)} className="w-full">
+              Fechar
+            </Button>
+          </div>
+        ) : (
+        <>
         <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <ArrowDownToLine className="w-5 h-5" />
@@ -161,10 +189,12 @@ export function WithdrawDialog({ availableAmount, onWithdrawRequest }: WithdrawD
               disabled={loading}
               className="flex-1 bg-gradient-withdraw hover:opacity-90"
             >
-              {loading ? "Processando..." : "Solicitar Saque"}
+              {loading ? "Processando..." : "Ir"}
             </Button>
           </div>
         </form>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   )
