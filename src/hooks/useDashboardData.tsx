@@ -97,7 +97,7 @@ export function useDashboardData(dateFilter: string = "30dias") {
 
       const { data: vendasGrafico, error: vendasGraficoError } = await supabase
         .from('vendas')
-        .select('valor_venda, created_at')
+        .select('valor_venda, created_at, nome_produto')
         .eq('user_id', user.id)
         .gte('created_at', chart6mStart.toISOString())
 
@@ -157,9 +157,9 @@ export function useDashboardData(dateFilter: string = "30dias") {
         abordagens: abordagensPorMes.get(mes)
       }))
 
-      // Produtos mais vendidos
+      // Produtos mais vendidos (usa dados de 6 meses sempre)
       const produtosCont = new Map()
-      vendas?.forEach(venda => {
+      vendasGrafico?.forEach(venda => {
         if (produtosCont.has(venda.nome_produto)) {
           const existing = produtosCont.get(venda.nome_produto)
           produtosCont.set(venda.nome_produto, {
