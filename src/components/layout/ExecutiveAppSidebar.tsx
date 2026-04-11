@@ -1,60 +1,68 @@
 import { useState, useEffect } from "react"
-import { 
-  BarChart3, 
+import {
+  BarChart3,
   Home,
   Trophy,
   Users,
   User,
-  Settings,
   Shield,
   ClipboardList,
   FolderOpen,
   Target,
   MessageSquare,
   ShoppingCart,
-  UserCheck
+  UserCheck,
+  TrendingUp,
+  BookOpen,
+  CheckSquare,
 } from "lucide-react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
+// Menu para executives / super_admin
 const menuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Home", url: "/home", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
   { title: "Executive", url: "/executive", icon: Shield },
-  { title: "Listagem de Membros", url: "/team-members", icon: UserCheck },
-  { 
-    title: "Formulários", 
-    icon: ClipboardList, 
+  { title: "Time", url: "/team-members", icon: UserCheck },
+  { title: "WorkBoard", url: "/workboard/admin", icon: CheckSquare },
+  { title: "CRM", url: "/crm", icon: Users },
+  { title: "Tráfego", url: "/traffic", icon: TrendingUp },
+  { title: "Playbooks", url: "/playbooks", icon: BookOpen },
+  {
+    title: "Formulários",
+    icon: ClipboardList,
     isDropdown: true,
     submenu: [
       { title: "Vendas", url: "/vendas", icon: ShoppingCart },
       { title: "Abordagens", url: "/abordagens", icon: MessageSquare },
-      { title: "Metas", url: "/workboard", icon: Target },
-    ]
+      { title: "Fechamento", url: "/closing", icon: Target },
+    ],
   },
-  { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Documentos", url: "/documentos", icon: FolderOpen },
   { title: "Ranking", url: "/ranking", icon: Trophy },
   { title: "Perfil", url: "/perfil", icon: User },
-  { title: "Configurações", url: "/configuracoes", icon: Settings },
 ]
 
+// Menu para roles não-executive (seller, closer, sdr, etc.)
 const individualMenuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { 
-    title: "Formulários", 
-    icon: ClipboardList, 
+  { title: "Home", url: "/home", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
+  {
+    title: "Formulários",
+    icon: ClipboardList,
     isDropdown: true,
     submenu: [
       { title: "Vendas", url: "/vendas", icon: ShoppingCart },
       { title: "Abordagens", url: "/abordagens", icon: MessageSquare },
-      { title: "Metas", url: "/workboard", icon: Target },
-    ]
+      { title: "Fechamento", url: "/closing", icon: Target },
+    ],
   },
+  { title: "Playbooks", url: "/playbooks", icon: BookOpen },
+  { title: "WorkBoard", url: "/workboard", icon: CheckSquare },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Documentos", url: "/documentos", icon: FolderOpen },
   { title: "Ranking", url: "/ranking", icon: Trophy },
   { title: "Perfil", url: "/perfil", icon: User },
-  { title: "Configurações", url: "/configuracoes", icon: Settings },
 ]
 
 interface AppSidebarProps {
@@ -72,12 +80,12 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
   }
 
   useEffect(() => {
-    const isFormularioRoute = items.find(item => 
-      item.isDropdown && item.submenu && isFormularioActive(item.submenu)
+    const isFormularioRoute = items.find(
+      item => item.isDropdown && item.submenu && isFormularioActive(item.submenu)
     )
     setOpenForm(!!isFormularioRoute)
   }, [location.pathname])
-  
+
   return (
     <aside className="w-16 min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
       <div className="p-4">
@@ -88,7 +96,7 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
         </div>
       </div>
 
-      <nav className="flex-1 flex flex-col gap-2 px-2">
+      <nav className="flex-1 flex flex-col gap-1 px-2 overflow-y-auto">
         {items.map((item) => {
           if (item.isDropdown && item.submenu) {
             return (
@@ -105,7 +113,7 @@ export function ExecutiveAppSidebar({ isExecutive = false }: AppSidebarProps) {
                   <item.icon className="w-5 h-5" />
                 </button>
                 {openForm && (
-                  <div className="flex flex-col gap-1 mt-2 ml-1">
+                  <div className="flex flex-col gap-1 mt-1 ml-1">
                     {item.submenu.map((subItem) => (
                       <NavLink
                         key={subItem.title}

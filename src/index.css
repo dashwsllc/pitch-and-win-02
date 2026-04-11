@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
 All colors MUST be HSL.
 */
+
+/* ===== Design tokens Zyron (dark permanente) ===== */
+:root {
+  --bg-base:        #09090E;
+  --bg-surface:     #111118;
+  --bg-elevated:    #1A1A26;
+  --bg-hover:       #1F1F2E;
+  --border:         rgba(255,255,255,0.07);
+  --border-active:  rgba(255,255,255,0.15);
+  --primary:        #6366F1;
+  --primary-hover:  #4F46E5;
+  --success:        #10B981;
+  --warning:        #F59E0B;
+  --danger:         #EF4444;
+  --text-1:         #F1F5F9;
+  --text-2:         #94A3B8;
+  --text-3:         #475569;
+}
 
 @layer base {
 :root {

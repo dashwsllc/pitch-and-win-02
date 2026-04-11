@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom'
 
 const Index = () => {
-  // Redirecionar para o dashboard individual
-  return <Navigate to="/dashboard" replace />
+  // Redirecionar para a home
+  return <Navigate to="/home" replace />
 }
 
 export default Index

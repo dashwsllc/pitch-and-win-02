@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 
-export type UserRole = 'seller' | 'executive' | 'super_admin'
+export type UserRole = 'seller' | 'executive' | 'super_admin' | 'closer' | 'sdr' | 'bdr' | 'traffic_manager'
 
 interface UserRoleData {
   id: string
@@ -44,7 +44,7 @@ export function useRoles() {
 
       const userRoles = (data?.map(r => r.role) || ['seller']) as UserRole[]
       setRoles(userRoles)
-      setIsExecutive(userRoles.includes('executive'))
+      setIsExecutive(userRoles.includes('executive') || userRoles.includes('super_admin'))
       setIsSuperAdmin(userRoles.includes('super_admin'))
     } catch (error) {
       console.error('Error in fetchUserRoles:', error)
@@ -99,7 +99,7 @@ export function useAllUsers() {
       // Buscar todos os roles de usuários
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
-        .select('user_id, role')
+        .select('user_id, role, can_view_sales')
 
       if (rolesError) {
         console.error('Error fetching roles:', rolesError)
@@ -114,14 +114,18 @@ export function useAllUsers() {
         rolesMap.set(roleEntry.user_id, existingRoles)
       })
 
+      // Buscar emails dos usuários via profiles (display_name) + last_seen_at
       // Combinar perfis com roles
       const mappedUsers = (profilesData || []).map((profile: any) => {
         const userRoles = (rolesMap.get(profile.user_id) || ['seller']) as string[]
-        
+        const roleEntry = rolesData?.find(r => r.user_id === profile.user_id)
+
         return {
           ...profile,
           roles: userRoles,
-          role: userRoles[0]
+          role: userRoles[0],
+          can_view_sales: (roleEntry as any)?.can_view_sales ?? false,
+          email: profile.email || null,
         }
       })
 
