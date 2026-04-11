@@ -152,6 +152,9 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -162,6 +165,25 @@ All colors MUST be HSL.
 
   html, body {
     overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(99, 102, 241, 0.35);
+    color: #fff;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #6366F1;
+    outline-offset: 2px;
+  }
+
+  /* Remove white/light outlines from all interactive elements */
+  button:focus,
+  a:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
   }
 }
 
